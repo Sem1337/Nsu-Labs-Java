@@ -1,24 +1,25 @@
-import java.io.*;
-import java.util.HashMap;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Map;
 import java.util.TreeMap;
 
-public class FileHandler {
+class FileHandler {
 
-    public FileHandler(String fileName) {
+    FileHandler(String fileName) {
         BufferedReader reader = null;
-        try
-        {
+        try {
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
-            while(true){
+            while(true) {
                 String line = reader.readLine();
                 if(line == null) break;
-
-                for ( String word: line.split("[\\W]")) {
+                for ( String word: line.split("[\\W_]")) {
+                    if(word.isEmpty())continue;
                     wordsCount++;
-                    if(!frequency.containsKey(word)){
+                    if (!frequency.containsKey(word)) {
                         frequency.put(word,1);
-                    }else{
+                    } else {
                         Integer incVal = frequency.get(word) + 1;
                         frequency.remove(word);
                         frequency.put(word,incVal);
@@ -26,20 +27,15 @@ public class FileHandler {
                 }
             }
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             System.err.println("Error while reading file: " + e.getLocalizedMessage());
         }
-        finally
-        {
-            if (null != reader)
-            {
-                try
-                {
+        finally {
+            if (null != reader) {
+                try {
                     reader.close();
                 }
-                catch (IOException e)
-                {
+                catch (IOException e) {
                     e.printStackTrace(System.err);
                 }
             }
@@ -47,13 +43,13 @@ public class FileHandler {
     }
 
     private Map<String, Integer>frequency = new TreeMap<>();
-    public Map<String, Integer> getFrequency() {
+    Map<String, Integer> getFrequency() {
         return frequency;
     }
 
 
     private int wordsCount;
-    public int getWordsCount() {
+    int getWordsCount() {
         return wordsCount;
     }
 

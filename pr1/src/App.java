@@ -6,7 +6,5 @@ public class App {
         FileHandler handler = new FileHandler("qqq.txt");
         CSVWriter writer = new CSVWriter("out.csv");
         writer.write(handler.getFrequency(),handler.getWordsCount());
-
     }
-
 }
