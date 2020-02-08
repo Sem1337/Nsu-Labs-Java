@@ -1,6 +1,6 @@
 import javafx.util.Pair;
 
-class ComparablePair<T extends Comparable, K extends  Comparable> extends Pair<Comparable,Comparable> implements Comparable<ComparablePair> {
+class ComparablePair<T extends Comparable, K extends Comparable> extends Pair<Comparable, Comparable> implements Comparable<ComparablePair> {
 
     ComparablePair(Comparable<Integer> key, Comparable<String> value) {
         super(key, value);
@@ -8,8 +8,8 @@ class ComparablePair<T extends Comparable, K extends  Comparable> extends Pair<C
 
     @Override
     public int compareTo(ComparablePair comparablePair) {
-        if(getKey().compareTo(comparablePair.getKey()) == 0) return getValue().compareTo(comparablePair.getValue());
-        return -1*getKey().compareTo(comparablePair.getKey());
+        if (getKey().compareTo(comparablePair.getKey()) == 0) return getValue().compareTo(comparablePair.getValue());
+        return -1 * getKey().compareTo(comparablePair.getKey());
     }
 }
 
