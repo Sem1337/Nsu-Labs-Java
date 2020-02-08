@@ -14,7 +14,7 @@ class FileHandler {
             while(true) {
                 String line = reader.readLine();
                 if(line == null) break;
-                for ( String word: line.split("[\\W_]")) {
+                for ( String word: line.toLowerCase().split("[\\W_]")) {
                     if(word.isEmpty())continue;
                     wordsCount++;
                     if (!frequency.containsKey(word)) {

@@ -8,7 +8,7 @@ class ComparablePair<T extends Comparable, K extends  Comparable> extends Pair<C
 
     @Override
     public int compareTo(ComparablePair comparablePair) {
-        if(getKey().compareTo(comparablePair.getKey()) == 0) return -1*getValue().compareTo(comparablePair.getValue());
+        if(getKey().compareTo(comparablePair.getKey()) == 0) return getValue().compareTo(comparablePair.getValue());
         return -1*getKey().compareTo(comparablePair.getKey());
     }
 }
