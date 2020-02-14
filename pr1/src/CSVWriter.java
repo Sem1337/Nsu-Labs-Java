@@ -19,16 +19,16 @@ class CSVWriter {
 
             writer = new BufferedWriter(new FileWriter(fileName));
             writer.write("Word;Frequency;%\n");
-            Set<ComparablePair<Integer, String>> orderedData = new TreeSet<ComparablePair<Integer, String>>();
+            Set<Token> orderedData = new TreeSet<Token>();
             for (Map.Entry<String, Integer> pair : data.entrySet()) {
-                orderedData.add(new ComparablePair<>(pair.getValue(), pair.getKey()));
+                orderedData.add(new Token(pair.getKey(), pair.getValue()));
             }
 
-            for (ComparablePair<Integer, String> pair : orderedData) {
-                int cnt = (int) pair.getKey();
+            for (Token pair : orderedData) {
+                int cnt = (int) pair.getFrequency();
                 double percent = (double) cnt / wordsCount * 100;
                 double truncatedPercent = BigDecimal.valueOf(percent).setScale(3, RoundingMode.HALF_UP).doubleValue();
-                writer.write(pair.getValue() + ";" + cnt + ";" + truncatedPercent + "%\n");
+                writer.write(pair.getWord() + ";" + cnt + ";" + truncatedPercent + "%\n");
             }
 
         } catch (IOException e) {
