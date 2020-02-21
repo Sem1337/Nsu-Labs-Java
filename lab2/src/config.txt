@@ -1,0 +1,9 @@
+POP:Pop
+PUSH:Push
++:Plus
+-:Minus
+*:Multiply
+/:Divide
+SQRT:Sqrt
+PRINT:Print
+DEFINE:Define
