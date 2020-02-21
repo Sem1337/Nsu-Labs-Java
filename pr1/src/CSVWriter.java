@@ -13,28 +13,25 @@ class CSVWriter {
         this.fileName = fileName;
     }
 
-    void write(Map<String, Integer> data, Integer wordsCount) {
+    void write(FileHandler handledData) {
+        Map<String, Integer> data = handledData.getFrequency();
+        Integer wordsCount = handledData.getWordsCount();
         BufferedWriter writer = null;
         try {
-
             writer = new BufferedWriter(new FileWriter(fileName));
             writer.write("Word;Frequency;%\n");
             Set<Token> orderedData = new TreeSet<Token>();
-            for (Map.Entry<String, Integer> pair : data.entrySet()) {
-                orderedData.add(new Token(pair.getKey(), pair.getValue()));
-            }
-
-            for (Token pair : orderedData) {
-                int cnt = (int) pair.getFrequency();
+            data.forEach((k,v) -> orderedData.add(new Token(k,v)));
+            for (Token token : orderedData) {
+                int cnt = (int) token.getFrequency();
                 double percent = (double) cnt / wordsCount * 100;
                 double truncatedPercent = BigDecimal.valueOf(percent).setScale(3, RoundingMode.HALF_UP).doubleValue();
-                writer.write(pair.getWord() + ";" + cnt + ";" + truncatedPercent + "%\n");
+                writer.write(token.getWord() + ";" + cnt + ";" + truncatedPercent + "%\n");
             }
-
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (null != writer) {
+            if (writer != null) {
                 try {
                     writer.close();
                 } catch (IOException e) {
