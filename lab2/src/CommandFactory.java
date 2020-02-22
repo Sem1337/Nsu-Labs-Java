@@ -1,23 +1,24 @@
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
-import java.util.Arrays;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.TreeMap;
 
 public class CommandFactory {
 
     CommandFactory(String name) {
         InputStream inputStream = null;
+        Scanner scanner = null;
         try {
             inputStream = CommandFactory.class.getResourceAsStream(name);
-            byte[] bytes = inputStream.readAllBytes();
-            String[] commandsDescription = (new String(bytes)).split("[:\\n]");
-            System.out.println(commandsDescription.length );
-            for (int i = 0; i < commandsDescription.length; i+=2) {
-                commandsNames.put(commandsDescription[i],commandsDescription[i+1]);
+            scanner = new Scanner(inputStream);
+            while(scanner.hasNextLine()) {
+                String[] commandsDescription = (scanner.nextLine()).split(":");
+                commandsNames.put(commandsDescription[0], commandsDescription[1]);
+
             }
-        } catch (IOException ex) {
+
+        } catch (RuntimeException ex) {
             System.err.println("Error reading config: " + ex.getLocalizedMessage());
         } catch (Exception ex) {
             System.err.println("Error parsing config: " + ex.getLocalizedMessage());
@@ -30,16 +31,24 @@ public class CommandFactory {
                     ex.printStackTrace(System.err);
                 }
             }
+
+            if(scanner != null) {
+                scanner.close();
+            }
         }
     }
 
 
-    Command getCommand(String name) {
+    Command getCommand(String name, String[] args) {
+        try {
+            return (Command) Class.forName(commandsNames.get(name)).getDeclaredConstructor().newInstance();
+        } catch(Exception ex) {
+            System.out.println(ex.getLocalizedMessage());
+        }
         return null;
     }
 
+
     private Map<String,String> commandsNames = new TreeMap<>();
-
-
 
 }

@@ -1,4 +1,3 @@
-import javafx.util.Pair;
 
 class Token implements Comparable<Token> {
 
