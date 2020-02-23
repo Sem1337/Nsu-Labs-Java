@@ -41,7 +41,8 @@ public class CommandFactory {
 
     Command getCommand(String name, String[] args) {
         try {
-            return (Command) Class.forName(commandsNames.get(name)).getDeclaredConstructor().newInstance();
+            var clazz = Class.forName(commandsNames.get(name));
+            return (Command)clazz.getDeclaredConstructor(clazz).newInstance(args);
         } catch(Exception ex) {
             System.out.println(ex.getLocalizedMessage());
         }

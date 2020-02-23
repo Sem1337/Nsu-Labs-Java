@@ -5,6 +5,9 @@ public class Push implements Command {
 
     @Override
     public void execute(DataStorage data) {
+        for (String arg: args) {
+            data.getOperands().push(arg);
+        }
     }
 
     private String[] args;
