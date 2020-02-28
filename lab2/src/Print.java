@@ -2,7 +2,7 @@ import java.util.regex.Pattern;
 
 public class Print implements Command {
 
-    public Print(String [] args) {
+    public Print(String args) {
     }
 
     @Override

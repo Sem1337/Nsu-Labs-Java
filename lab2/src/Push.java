@@ -1,6 +1,6 @@
 public class Push implements Command {
-    public Push(String[] args) {
-        this.args = args;
+    public Push(String args) {
+        this.args = args.split(" ");
     }
 
     @Override

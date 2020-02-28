@@ -2,7 +2,7 @@ import java.util.regex.Pattern;
 
 public class Subtraction implements Command {
 
-    public Subtraction(String [] args) {
+    public Subtraction(String args) {
 
     }
 

@@ -2,7 +2,7 @@ import java.util.regex.Pattern;
 
 public class Multiplication implements Command {
 
-    public Multiplication(String [] args) {
+    public Multiplication(String args) {
     }
 
     @Override

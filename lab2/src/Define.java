@@ -1,7 +1,7 @@
 public class Define implements Command {
 
-    public Define(String [] args) {
-        this.args = args;
+    public Define(String args) {
+        this.args = args.split(" ");
     }
 
     @Override

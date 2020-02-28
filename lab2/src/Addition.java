@@ -2,7 +2,7 @@ import java.util.regex.Pattern;
 
 public class Addition implements Command {
 
-    public Addition(String [] args) {
+    public Addition(String args) {
     }
 
     @Override

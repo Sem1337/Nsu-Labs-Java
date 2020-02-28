@@ -2,7 +2,7 @@ import java.util.regex.Pattern;
 
 public class Division implements Command {
 
-    public Division(String [] args){
+    public Division(String args){
     }
 
     @Override

@@ -2,7 +2,7 @@ import java.util.regex.Pattern;
 
 public class Sqrt implements Command {
 
-    public Sqrt(String [] args){
+    public Sqrt(String args){
     }
 
     @Override
