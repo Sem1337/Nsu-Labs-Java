@@ -1,4 +1,6 @@
 DEFINE a 4
 PUSH a
-SQRT
+PUSH 3
+PUSH b
++
 PRINT

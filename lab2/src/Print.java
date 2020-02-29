@@ -7,6 +7,10 @@ public class Print implements Command {
 
     @Override
     public void execute(DataStorage data) {
+        if(data.getOperands().empty()){
+            System.out.println("stack is empty");
+            return;
+        }
         String v = data.getOperands().pop();
         if(correctPattern.matcher(v).matches()) {
             System.out.println(v);

@@ -15,7 +15,6 @@ public class CommandFactory {
             while(scanner.hasNextLine()) {
                 String[] commandsDescription = (scanner.nextLine()).split(":");
                 commandsNames.put(commandsDescription[0], commandsDescription[1]);
-
             }
 
         } catch (RuntimeException ex) {

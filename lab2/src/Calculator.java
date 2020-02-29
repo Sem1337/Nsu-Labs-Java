@@ -20,12 +20,17 @@ public class Calculator {
     }
 
     void run(CommandFactory factory) {
-        while(scanner.hasNextLine()){
+        while(scanner.hasNextLine()) {
             String line = scanner.nextLine();
+            if(line.charAt(0) == '#')continue;
             String[] splittedLine = line.split("[ \n\0]", 2);
             Command command = factory.getCommand(splittedLine[0], splittedLine.length == 1? "" : splittedLine[1]);
-            command.execute(dataStorage);
-
+            if(command == null)continue;
+            try {
+                command.execute(dataStorage);
+            } catch(RuntimeException ex){
+                System.out.println(ex.getLocalizedMessage());
+            }
         }
     }
 
