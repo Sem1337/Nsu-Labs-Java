@@ -1,20 +1,10 @@
-мар. 13, 2020 9:58:03 PM main.Calculator run
-SEVERE: Exception occur
-main.calcExceptions.IncorrectArgument: incorrect argument for Define command
-	at main.commands.Define.execute(Define.java:22)
-	at main.Calculator.run(Calculator.java:43)
-	at main.Application.main(Application.java:10)
-
-мар. 13, 2020 9:58:03 PM main.commands.Push execute
-FINE: push: a
-мар. 13, 2020 9:58:03 PM main.commands.Define execute
-FINE: define b = 10
-мар. 13, 2020 9:58:03 PM main.commands.Push execute
-FINE: push: b
-мар. 13, 2020 9:58:03 PM main.Calculator run
-SEVERE: Exception occur
-main.calcExceptions.IncorrectArgument: incorrect argument for addition command
-	at main.commands.Addition.execute(Addition.java:26)
-	at main.Calculator.run(Calculator.java:43)
-	at main.Application.main(Application.java:10)
-
+мар. 14, 2020 12:06:53 PM main.Calculator run
+FINE: success Define [a, 10]
+мар. 14, 2020 12:06:54 PM main.Calculator run
+FINE: success Push [a]
+мар. 14, 2020 12:06:54 PM main.Calculator run
+FINE: success Push [15]
+мар. 14, 2020 12:06:54 PM main.Calculator run
+FINE: success Addition command
+мар. 14, 2020 12:06:54 PM main.Calculator run
+FINE: success Print command

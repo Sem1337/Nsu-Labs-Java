@@ -6,7 +6,6 @@ import main.calcExceptions.IncorrectResult;
 import main.calcExceptions.NotEnoughOperands;
 import main.calcExceptions.WrongNumberOfArguments;
 
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 public class Subtraction implements Command {
@@ -26,9 +25,13 @@ public class Subtraction implements Command {
         if(operand1 == null || operand2 == null) throw new IncorrectArgument("incorrect argument for Subtraction command");
         double result = operand2 - operand1;
         if(!Double.isFinite(result)) throw new IncorrectResult("incorrect result if execute Subtraction command with args" + operand1 + " " + operand2);
-        Calculator.LOGGER.log(Level.FINE, "result = " + String.valueOf(result));
         data.getOperands().push(Double.toString(result));
     }
 
     Pattern correctPattern = Pattern.compile("-?\\d+(\\.\\d+)?(E-?\\d+)?");
+
+    @Override
+    public String toString() {
+        return "Subtraction command";
+    }
 }

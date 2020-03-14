@@ -5,6 +5,7 @@ import main.DataStorage;
 import main.calcExceptions.IncorrectArgument;
 import main.calcExceptions.WrongNumberOfArguments;
 
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
@@ -20,11 +21,15 @@ public class Define implements Command {
     public void execute(DataStorage data) {
         Double value = correctPattern.matcher(args[1]).matches()? Double.valueOf(args[1]) : null;
         if(value == null || Character.isDigit(args[0].charAt(0)))throw new IncorrectArgument("incorrect argument for Define command");
-        Calculator.LOGGER.log(Level.FINE, "define " + args[0]  + " = " + args[1]);
         data.getVariables().put(args[0], Double.valueOf(args[1]));
     }
 
     private String [] args;
     Pattern correctPattern = Pattern.compile("-?\\d+(\\.\\d+)?(E-?\\d+)?");
+
+    @Override
+    public String toString() {
+        return "Define " + Arrays.toString(args);
+    }
 
 }

@@ -6,7 +6,6 @@ import main.calcExceptions.IncorrectResult;
 import main.calcExceptions.NotEnoughOperands;
 import main.calcExceptions.WrongNumberOfArguments;
 
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 public class Multiplication implements Command {
@@ -26,9 +25,15 @@ public class Multiplication implements Command {
         if(operand1 == null || operand2 == null) throw new IncorrectArgument("incorrect argument for Multiplication command");
         double result = operand1 * operand2;
         if(!Double.isFinite(result)) throw new IncorrectResult("incorrect result if execute Multiplication command with args" + operand1 + " " + operand2);
-        Calculator.LOGGER.log(Level.FINE, "result = " + String.valueOf(result));
         data.getOperands().push(Double.toString(result));
     }
 
     Pattern correctPattern = Pattern.compile("-?\\d+(\\.\\d+)?(E-?\\d+)?");
+
+    @Override
+    public String toString() {
+        return "Multiplication command";
+    }
+
+
 }

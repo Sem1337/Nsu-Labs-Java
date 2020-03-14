@@ -1,10 +1,10 @@
 package main.commands;
 
-import main.Calculator;
 import main.DataStorage;
 import main.calcExceptions.WrongNumberOfArguments;
 
-import java.util.logging.Level;
+import java.util.Arrays;
+
 
 public class Push implements Command {
     public Push(String args) {
@@ -17,9 +17,15 @@ public class Push implements Command {
     public void execute(DataStorage data) {
         for (String arg: args) {
             data.getOperands().push(arg);
-            Calculator.LOGGER.log(Level.FINE, "push: " + arg);
         }
     }
 
     private String[] args;
+
+    @Override
+    public String toString() {
+        return "Push " + Arrays.toString(args);
+    }
+
+
 }

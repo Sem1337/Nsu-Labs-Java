@@ -36,18 +36,21 @@ public class Calculator {
         while(scanner.hasNextLine()) {
             String line = scanner.nextLine();
             if(line.charAt(0) == '#')continue;
-            String[] splittedLine = line.split("[ \n\0]", 2);
+            String[] splittedLine = line.split("[ \n]", 2);
             Command command = factory.getCommand(splittedLine[0], splittedLine.length == 1? "" : splittedLine[1]);
-            if(command == null)continue;
+            if(command == null) {
+                LOGGER.log(Level.SEVERE, "unknown command " + splittedLine[0]);
+                continue;
+            }
             try {
                 command.execute(dataStorage);
+                LOGGER.log(Level.FINE, "success " + command.toString() );
             } catch (RuntimeException ex){
                 LOGGER.log(Level.SEVERE, "Exception occur", ex);
             }
         }
     }
-    public static final Logger LOGGER = Logger.getLogger(Calculator.class.getName());
+    private final Logger LOGGER = Logger.getLogger(Calculator.class.getName());
     private DataStorage dataStorage = new DataStorage();
     private Scanner scanner;
-
 }

@@ -3,7 +3,7 @@ package main.commands;
 import main.*;
 import main.calcExceptions.*;
 
-import java.util.logging.Level;
+
 import java.util.regex.Pattern;
 
 public class Division implements Command {
@@ -24,9 +24,14 @@ public class Division implements Command {
         double result = operand2 / operand1;
         if(operand1 == 0.0)throw new DivisionByZero();
         if(!Double.isFinite(result)) throw new IncorrectResult("incorrect result if execute Division command with args" + operand1 + " " + operand2);
-        Calculator.LOGGER.log(Level.FINE, "result = " + String.valueOf(result));
         data.getOperands().push(Double.toString(result));
     }
 
     Pattern correctPattern = Pattern.compile("-?\\d+(\\.\\d+)?(E-?\\d+)?");
+
+    @Override
+    public String toString() {
+        return "Division command";
+    }
+
 }

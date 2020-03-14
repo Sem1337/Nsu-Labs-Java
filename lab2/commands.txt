@@ -1,6 +1,6 @@
-DEFINE a b
+DEFINE a 10
 PUSH a
-DEFINE b 10
-PUSH b
+PUSH 15
+#qqqqqqqqqqqq
 +
 PRINT

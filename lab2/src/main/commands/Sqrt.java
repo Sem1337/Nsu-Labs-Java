@@ -5,7 +5,6 @@ import main.calcExceptions.IncorrectArgument;
 import main.calcExceptions.NotEnoughOperands;
 import main.calcExceptions.WrongNumberOfArguments;
 
-import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 public class Sqrt implements Command {
@@ -20,11 +19,16 @@ public class Sqrt implements Command {
         if(data.getOperands().size() < 1)throw new NotEnoughOperands("not enough operands in stack for SQRT command: expected 1. found " + data.getOperands().size());
         String v = data.getOperands().pop();
         Double operand = correctPattern.matcher(v).matches()? Double.valueOf(v) : data.getVariables().get(v);
-        if(operand == null || operand < 0) throw new IncorrectArgument("Wrong argument for SQRT command");
+        if(operand == null || operand < 0) throw new IncorrectArgument("Wrong argument for SQRT command: " + v);
         double result = Math.sqrt(operand);
-        Calculator.LOGGER.log(Level.FINE, "result = " + String.valueOf(result));
         data.getOperands().push(Double.toString(result));
     }
 
     Pattern correctPattern = Pattern.compile("-?\\d+(\\.\\d+)?(E-?\\d+)?");
+
+    @Override
+    public String toString() {
+        return "Sqrt command";
+    }
+
 }
