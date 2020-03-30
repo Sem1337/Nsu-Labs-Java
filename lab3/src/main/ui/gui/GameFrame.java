@@ -2,10 +2,14 @@ package main.ui.gui;
 
 import main.Application;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 import static java.lang.Math.min;
 
@@ -16,20 +20,28 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("main.Minesweeper");
+        this.setPreferredSize(new Dimension(width,height));
 
         topPanel = new JPanel();
         topPanel.setBackground(Color.RED);
+        topPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfTopPanel)));
 
         centerPanel = new JPanel();
         centerPanel.setBackground(Color.YELLOW);
+        centerPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfCenterPanel)));
 
         fieldPanel = new JPanel();
         fieldPanel.setLayout(new GridLayout(rows,cols));
         fieldPanel.setBackground(Color.GRAY);
+        int sz = min(centerPanel.getWidth() / cols, centerPanel.getHeight() / rows);
+        fieldPanel.setPreferredSize(new Dimension(sz * cols, sz* rows));
+
+        bufferedImages = new BufferedImage[rows][cols];
         setupField(rows,cols);
 
         bottomPanel = new JPanel();
         bottomPanel.setBackground(Color.GREEN);
+        bottomPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfBottomPanel)));
 
         centerPanel.setVisible(true);
         bottomPanel.setVisible(true);
@@ -53,6 +65,13 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         add(centerPanel);
         configureConstraints();
         setVisible(true);
+        cachedCellsState = new int[rows][cols];
+        for(int i =0 ;i<rows;i++){
+            for(int j=0;j<cols;j++){
+                cachedCellsState[i][j] = -2;
+            }
+        }
+
         //fieldPanel.setSize(centerPanel.getWidth(), centerPanel.getHeight());
     }
 
@@ -84,9 +103,44 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         cells = new JButton[rows][cols];
         for(int row = 1; row <= rows; row++) {
             for(int col = 1; col <= cols; col++){
-
-                cells[row-1][col-1] = new JButton(new ImageIcon("resources/unchecked.png"));
+                try {
+                    bufferedImages[row - 1][col - 1] = ImageIO.read(new File("resources/unchecked45.png"));
+                } catch (IOException e) {
+                    System.out.println("setup");
+                }
+                cells[row-1][col-1] = new JButton();
+                int sz = fieldPanel.getHeight() / rows;
+                cells[row-1][col-1].setPreferredSize(new Dimension(sz,sz));
                 cells[row-1][col-1].setVisible(true);
+
+                int finalRow = row;
+                int finalCol = col;
+                cells[row-1][col-1].addComponentListener(new ComponentAdapter() {
+                    @Override
+                    public void componentResized(ComponentEvent e) {
+                        super.componentResized(e);
+
+                        JButton btn = (JButton) e.getComponent();
+                        Dimension size = btn.getSize();
+                        //Insets insets = btn.getInsets();
+                        //size.width -= insets.left + insets.right;
+                        //size.height -= insets.top + insets.bottom;
+                        //System.out.println(size.width);
+                        //System.out.println(size.height);
+                        /*if (size.width > size.height) {
+                            size.width = -1;
+                        } else {
+                            size.height = -1;
+                        }*/
+                        Image scaled = bufferedImages[finalRow- 1][finalCol - 1].getScaledInstance(size.width, size.height, Image.SCALE_FAST);
+                        btn.setIcon(new ImageIcon(scaled));
+
+                        /*var button = cells[finalRow-1][finalCol-1];
+                        int sz = e.getComponent().getHeight();
+                        button.setIcon(resizeIcon((ImageIcon) button.getIcon(),sz,sz));*/
+                    }
+                });
+
                 fieldPanel.add(cells[row-1][col-1]);
             }
         }
@@ -94,9 +148,10 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
     }
 
     private ImageIcon resizeIcon(ImageIcon icon, int width, int height) {
-        Image img = icon.getImage();
-        Image newImg = img.getScaledInstance(width, height,  java.awt.Image.SCALE_SMOOTH);
-        return new ImageIcon(newImg);
+        return icon;
+        //Image img = icon.getImage();
+        //Image newImg = img.getScaledInstance(width, height,  Image.SCALE_DEFAULT);
+        //return new ImageIcon(newImg);
     }
 
     private void resizeField(int width, int height) {
@@ -118,24 +173,31 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
     private JPanel fieldPanel;
     private JPanel bottomPanel;
     private JButton[][] cells;
+    private int[][] cachedCellsState;
+    private BufferedImage[][] bufferedImages;
 
     @Override
     public void draw(int[][] cellsState, int[][] field) {
         int sz = fieldPanel.getHeight() / cellsState.length;
         for(int i = 0; i< cellsState.length; i++) {
             for(int j=0; j< cellsState[i].length; j++){
-                if(cellsState[i][j] == 0)continue;
+                if(cellsState[i][j] == 0 || cachedCellsState[i][j] == cellsState[i][j])continue;
                 if(cellsState[i][j] == -1) {
-                    //System.out.println("here");
+                    System.out.println("here");
                     //cells[i][j].setBackground(Color.BLUE);
-                    cells[i][j].setIcon(resizeIcon(new ImageIcon("resources/flag.png"),sz,sz));
+                    try {
+                        bufferedImages[i][j] = ImageIO.read(new File("resources/flag30.png"));
+                    } catch (IOException e){
+                        System.out.println("draw");
+                    }
+                    //cells[i][j].setIcon(resizeIcon(new ImageIcon("resources/flag.png"),sz,sz));
 
                 } else if(cellsState[i][j] == 1){
 
                 }
             }
         }
-        fieldPanel.updateUI();
+        cachedCellsState = cellsState;
     }
 
 }

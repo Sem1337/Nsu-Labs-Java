@@ -43,7 +43,7 @@ public class Minesweeper {
 
         for(int i = 0; i<rows; i++) {
             for(int j=0;j < cols;j++){
-                cellsState[i][j] = -1;
+                if((i+j)%2 == 0) cellsState[i][j] = -1;
                 if(field[i][j] == -1)continue;
                 int cnt =0;
                 for(int l = -1; l <= 1; l++) {
