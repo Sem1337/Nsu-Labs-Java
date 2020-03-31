@@ -208,34 +208,42 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
     private BufferedImage[][] bufferedImages;
 
     @Override
-    public void draw(Integer[][] cellsState, int[][] field) {
-        int sz = fieldPanel.getHeight() / cellsState.length;
-        for(int i = 0; i< cellsState.length; i++) {
-            for(int j=0; j< cellsState[i].length; j++){
-                if(cachedCellsState[i][j] == cellsState[i][j])continue;
-                if(cellsState[i][j] == 0) {
-                    try {
-                        bufferedImages[i][j] = ImageIO.read(new File("resources/unchecked45.png"));
-                    } catch (IOException e){
-                        System.out.println("draw");
-                    }
-                } else if(cellsState[i][j] == -1) {
+    public void draw(Integer[][] field) {
+
+        for(int i = 0; i< field.length; i++) {
+            for(int j=0; j< field[i].length; j++){
+                if(cachedCellsState[i][j] == field[i][j])continue;
+                if(field[i][j] == -3) {
                     try {
                         bufferedImages[i][j] = ImageIO.read(new File("resources/flag64.png"));
                     } catch (IOException e){
                         System.out.println("draw");
                     }
 
-                } else if(cellsState[i][j] == 1) {
+                } else if(field[i][j] == -2) {
+                    try {
+                        bufferedImages[i][j] = ImageIO.read(new File("resources/unchecked45.png"));
+                    } catch (IOException e){
+                        System.out.println("draw");
+                    }
+                }
+                else if(field[i][j] == -1) {
                     try {
                         bufferedImages[i][j] = ImageIO.read(new File("resources/mine80.jpg"));
                     } catch (IOException e){
                         System.out.println("draw");
                     }
+                } else {
+                    try {
+                        bufferedImages[i][j] = ImageIO.read(new File("resources/unchecked45.png"));
+                    } catch (IOException e){
+                        System.out.println("draw");
+                    }
                 }
                 if(cells[i][j].getWidth() != 0) updateCellImage(i,j, cells[i][j].getSize());
-                cachedCellsState[i][j] = cellsState[i][j];
-                
+                cachedCellsState[i][j] = field[i][j];
+                field[i][j] = -3;
+
             }
         }
     }
