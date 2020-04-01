@@ -26,6 +26,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         topPanel.setBackground(Color.RED);
         topPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfTopPanel)));
 
+
         centerPanel = new JPanel();
         centerPanel.setBackground(Color.YELLOW);
         centerPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfCenterPanel)));
@@ -36,7 +37,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         int sz = min(centerPanel.getWidth() / cols, centerPanel.getHeight() / rows);
         fieldPanel.setPreferredSize(new Dimension(sz * cols, sz* rows));
 
-        bufferedImages = new BufferedImage[rows][cols];
+        bufferedCellImages = new BufferedImage[rows][cols];
         setupField(rows,cols);
 
         bottomPanel = new JPanel();
@@ -49,6 +50,18 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         fieldPanel.setVisible(true);
         centerPanel.add(fieldPanel);
 
+        this.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                int width = e.getComponent().getWidth();
+                int height = e.getComponent().getHeight();
+                bottomPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfBottomPanel)));
+                centerPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfCenterPanel)));
+                topPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfTopPanel)));
+            }
+        });
+
         centerPanel.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -60,6 +73,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
             }
         });
 
+        setupButtons();
         add(topPanel);
         add(bottomPanel);
         add(centerPanel);
@@ -73,8 +87,69 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         }
     }
 
-    private void setupButtons(int rows, int cols) {
+    private void setupButtons() {
+        try {
+            bufferedRetryImage = ImageIO.read(new File("resources/retry256.png"));
+        } catch (IOException e) {
+            System.out.println(e.getLocalizedMessage());
+        }
+        retryButton = new JButton();
+        retryButton.setVisible(true);
 
+        retryButton.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                Dimension size = e.getComponent().getSize();
+                updateButtonImage(retryButton, bufferedRetryImage, size);
+            }
+        });
+
+        retryButton.addMouseListener(new MouseAdapter() {
+            boolean pressed;
+            JButton button = retryButton;
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                button.getModel().setArmed(true);
+                button.getModel().setPressed(true);
+                pressed = true;
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                button.getModel().setArmed(false);
+                button.getModel().setPressed(false);
+
+                if (pressed) {
+                    dataBuffer = new DTO("retry");
+                }
+                pressed = false;
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                pressed = true;
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                pressed = false;
+            }
+        });
+
+        topPanel.add(retryButton);
+
+
+    }
+
+
+    private void updateButtonImage(JButton button, Image img, Dimension size) {
+        Image scaled = img.getScaledInstance(size.width, size.height, Image.SCALE_FAST);
+        button.setIcon(new ImageIcon(scaled));
     }
 
     private void configureConstraints() {
@@ -82,6 +157,13 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         setLayout(layout);
         SpringLayout centerLayout = new SpringLayout();
         centerPanel.setLayout(centerLayout);
+        SpringLayout topLayout = new SpringLayout();
+        topPanel.setLayout(topLayout);
+
+        topLayout.putConstraint(SpringLayout.WEST, retryButton, 3, SpringLayout.WEST, topPanel);
+        topLayout.putConstraint(SpringLayout.NORTH, retryButton, 3, SpringLayout.NORTH, topPanel);
+        topLayout.putConstraint(SpringLayout.WIDTH, retryButton, 0, SpringLayout.HEIGHT, retryButton);
+        topLayout.putConstraint(SpringLayout.HEIGHT, retryButton, -6, SpringLayout.HEIGHT, topPanel);
 
         centerLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, fieldPanel, 0,SpringLayout.HORIZONTAL_CENTER, centerPanel);
         centerLayout.putConstraint(SpringLayout.VERTICAL_CENTER, fieldPanel, 0, SpringLayout.VERTICAL_CENTER, centerPanel);
@@ -101,76 +183,76 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         cells = new JButton[rows][cols];
         for(int row = 0; row < rows; row++) {
             for(int col = 0; col < cols; col++){
-                try {
-                    bufferedImages[row][col] = ImageIO.read(new File("resources/unchecked45.png"));
-                } catch (IOException e) {
-                    System.out.println("setup");
-                }
-                cells[row][col] = new JButton();
-                int sz = fieldPanel.getHeight() / rows;
-                cells[row][col].setPreferredSize(new Dimension(sz,sz));
-                cells[row][col].setVisible(true);
-
-                Integer finalRow = row;
-                Integer finalCol = col;
-                cells[row][col].addComponentListener(new ComponentAdapter() {
-                    @Override
-                    public void componentResized(ComponentEvent e) {
-                        super.componentResized(e);
-                        //JButton btn = (JButton) e.getComponent();
-                        Dimension size = cells[finalRow][finalCol].getSize();
-                        updateCellImage(finalRow,finalCol,size);
-                    }
-                });
-
-                cells[row][col].addMouseListener(new MouseAdapter() {
-                    boolean pressed;
-                    JButton button = cells[finalRow][finalCol];
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                        super.mousePressed(e);
-                        button.getModel().setArmed(true);
-                        button.getModel().setPressed(true);
-                        pressed = true;
-                    }
-
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                        super.mouseReleased(e);
-                        button.getModel().setArmed(false);
-                        button.getModel().setPressed(false);
-
-                        if (pressed) {
-                            if (SwingUtilities.isRightMouseButton(e)) {
-                                dataBuffer = new DTO("setFlag", finalRow.toString(), finalCol.toString());
-                            }
-                            else {
-                                dataBuffer = new DTO("openCell", finalRow.toString(), finalCol.toString());
-                            }
-                        }
-                        pressed = false;
-                    }
-
-                    @Override
-                    public void mouseEntered(MouseEvent e) {
-                        super.mouseEntered(e);
-                        pressed = true;
-                    }
-
-                    @Override
-                    public void mouseExited(MouseEvent e) {
-                        super.mouseExited(e);
-                        pressed = false;
-                    }
-                });
-
+                setupCell(row,col);
                 fieldPanel.add(cells[row][col]);
             }
         }
     }
 
+    private void setupCell(Integer row, Integer col) {
+        try {
+            bufferedCellImages[row][col] = ImageIO.read(new File("resources/unchecked45.png"));
+        } catch (IOException e) {
+            System.out.println("setup");
+        }
+        cells[row][col] = new JButton();
+        cells[row][col].setVisible(true);
+
+        cells[row][col].addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                Dimension size = cells[row][col].getSize();
+                updateButtonImage(cells[row][col], bufferedCellImages[row][col], size);
+            }
+        });
+
+        cells[row][col].addMouseListener(new MouseAdapter() {
+            boolean pressed;
+            JButton button = cells[row][col];
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                button.getModel().setArmed(true);
+                button.getModel().setPressed(true);
+                pressed = true;
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                button.getModel().setArmed(false);
+                button.getModel().setPressed(false);
+
+                if (pressed) {
+                    if (SwingUtilities.isRightMouseButton(e)) {
+                        dataBuffer = new DTO("setFlag", row.toString(), col.toString());
+                    }
+                    else {
+                        dataBuffer = new DTO("openCell", row.toString(), col.toString());
+                    }
+                }
+                pressed = false;
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                pressed = true;
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                pressed = false;
+            }
+        });
+    }
+
+
+
     private void updateCellImage(int row, int col, Dimension sz) {
-        Image scaled = bufferedImages[row][col].getScaledInstance(sz.width, sz.height, Image.SCALE_FAST);
+        Image scaled = bufferedCellImages[row][col].getScaledInstance(sz.width, sz.height, Image.SCALE_FAST);
         cells[row][col].setIcon(new ImageIcon(scaled));
     }
 
@@ -196,16 +278,19 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
     }
 
     private DTO dataBuffer = new DTO("empty");
-    private double verticalPartOfTopPanel = 0.1;
-    private double verticalPartOfBottomPanel = 0.1;
-    private double verticalPartOfCenterPanel = 0.8;
+    private double verticalPartOfTopPanel = 0.07;
+    private double verticalPartOfBottomPanel = 0.07;
+    private double verticalPartOfCenterPanel = 0.86;
     private JPanel topPanel;
     private JPanel centerPanel;
     private JPanel fieldPanel;
     private JPanel bottomPanel;
     private JButton[][] cells;
     private int[][] cachedCellsState;
-    private BufferedImage[][] bufferedImages;
+    private BufferedImage[][] bufferedCellImages;
+    private BufferedImage bufferedRetryImage;
+    private JButton retryButton;
+
 
     @Override
     public void draw(Integer[][] field) {
@@ -215,35 +300,41 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
                 if(cachedCellsState[i][j] == field[i][j])continue;
                 if(field[i][j] == -3) {
                     try {
-                        bufferedImages[i][j] = ImageIO.read(new File("resources/flag64.png"));
+                        bufferedCellImages[i][j] = ImageIO.read(new File("resources/flag64.png"));
                     } catch (IOException e){
                         System.out.println("draw");
                     }
 
                 } else if(field[i][j] == -2) {
                     try {
-                        bufferedImages[i][j] = ImageIO.read(new File("resources/unchecked45.png"));
+                        bufferedCellImages[i][j] = ImageIO.read(new File("resources/unchecked45.png"));
                     } catch (IOException e){
                         System.out.println("draw");
                     }
                 }
                 else if(field[i][j] == -1) {
                     try {
-                        bufferedImages[i][j] = ImageIO.read(new File("resources/mine80.jpg"));
+                        bufferedCellImages[i][j] = ImageIO.read(new File("resources/mine80.jpg"));
+                        cells[i][j].setBackground(Color.RED);
+                    } catch (IOException e){
+                        System.out.println("draw");
+                    }
+                } else if(field[i][j] == -4) {
+                    try {
+                        bufferedCellImages[i][j] = ImageIO.read(new File("resources/red_mine80.jpg"));
+                        cells[i][j].setBackground(Color.RED);
                     } catch (IOException e){
                         System.out.println("draw");
                     }
                 } else {
                     try {
-                        bufferedImages[i][j] = ImageIO.read(new File("resources/unchecked45.png"));
+                        bufferedCellImages[i][j] = ImageIO.read(new File("resources/" + field[i][j] + ".png"));
                     } catch (IOException e){
                         System.out.println("draw");
                     }
                 }
-                if(cells[i][j].getWidth() != 0) updateCellImage(i,j, cells[i][j].getSize());
+                if(cells[i][j].getWidth() != 0) updateButtonImage(cells[i][j], bufferedCellImages[i][j], cells[i][j].getSize());
                 cachedCellsState[i][j] = field[i][j];
-                field[i][j] = -3;
-
             }
         }
     }
