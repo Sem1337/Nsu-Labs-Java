@@ -14,7 +14,7 @@ import static java.lang.Math.min;
 
 public class GameFrame extends JFrame implements main.ui.GameFrame {
 
-    public GameFrame(int width, int height, int rows, int cols) {
+    public GameFrame(int rows, int cols) {
         setSize(width, height);
         setMinimumSize(new Dimension(450,450));
         setLocationRelativeTo(null);
@@ -28,16 +28,11 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
 
 
         centerPanel = new JPanel();
-        centerPanel.setBackground(Color.YELLOW);
-        centerPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfCenterPanel)));
+        setupCenterPanel(rows,cols);
 
+        initArrays(rows,cols);
         fieldPanel = new JPanel();
-        fieldPanel.setLayout(new GridLayout(rows,cols));
-        fieldPanel.setBackground(Color.GRAY);
-        int sz = min(centerPanel.getWidth() / cols, centerPanel.getHeight() / rows);
-        fieldPanel.setPreferredSize(new Dimension(sz * cols, sz* rows));
-
-        bufferedCellImages = new BufferedImage[rows][cols];
+        setupFieldPanel(rows,cols);
         setupField(rows,cols);
 
         bottomPanel = new JPanel();
@@ -62,16 +57,6 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
             }
         });
 
-        centerPanel.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                super.componentResized(e);
-                int cellSize = min(e.getComponent().getWidth() / cols, e.getComponent().getHeight() / rows);
-                resizeField(cellSize * cols, cellSize * rows);
-                centerPanel.updateUI();
-                //SwingUtilities.updateComponentTreeUI(GameFrame.this);
-            }
-        });
 
         setupButtons();
         add(topPanel);
@@ -79,13 +64,32 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         add(centerPanel);
         configureConstraints();
         setVisible(true);
-        cachedCellsState = new int[rows][cols];
-        for(int i =0 ;i<rows;i++){
-            for(int j=0;j<cols;j++){
-                cachedCellsState[i][j] = -2;
-            }
-        }
+
+
     }
+
+
+    private void setupCenterPanel(int rows,int cols) {
+
+        centerPanel.setBackground(Color.YELLOW);
+        centerPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfCenterPanel)));
+
+        var listeners = centerPanel.getComponentListeners();
+        for (var listener: listeners) {
+            centerPanel.removeComponentListener(listener);
+        }
+
+        centerPanel.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                int cellSize = min(e.getComponent().getWidth() / cols, e.getComponent().getHeight() / rows);
+                resizeField(cellSize * cols, cellSize * rows);
+                centerPanel.updateUI();
+            }
+        });
+    }
+
 
     private void setupButtons() {
         try {
@@ -140,8 +144,63 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
                 pressed = false;
             }
         });
-
         topPanel.add(retryButton);
+
+
+
+        try {
+            bufferedSettingsImage = ImageIO.read(new File("resources/settings256.png"));
+        } catch (IOException e) {
+            System.out.println(e.getLocalizedMessage());
+        }
+        settingsButton = new JButton();
+        settingsButton.setVisible(true);
+
+        settingsButton.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                Dimension size = e.getComponent().getSize();
+                updateButtonImage(settingsButton, bufferedSettingsImage, size);
+            }
+        });
+
+        settingsButton.addMouseListener(new MouseAdapter() {
+            boolean pressed;
+            JButton button = settingsButton;
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                button.getModel().setArmed(true);
+                button.getModel().setPressed(true);
+                pressed = true;
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                button.getModel().setArmed(false);
+                button.getModel().setPressed(false);
+
+                if (pressed) {
+                    dataBuffer = new DTO("settings");
+                }
+                pressed = false;
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                pressed = true;
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                pressed = false;
+            }
+        });
+        topPanel.add(settingsButton);
 
 
     }
@@ -165,6 +224,11 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         topLayout.putConstraint(SpringLayout.WIDTH, retryButton, 0, SpringLayout.HEIGHT, retryButton);
         topLayout.putConstraint(SpringLayout.HEIGHT, retryButton, -6, SpringLayout.HEIGHT, topPanel);
 
+        topLayout.putConstraint(SpringLayout.EAST, settingsButton, -3, SpringLayout.EAST, topPanel);
+        topLayout.putConstraint(SpringLayout.NORTH, settingsButton, 3, SpringLayout.NORTH, topPanel);
+        topLayout.putConstraint(SpringLayout.WIDTH, settingsButton, 0, SpringLayout.HEIGHT, settingsButton);
+        topLayout.putConstraint(SpringLayout.HEIGHT, settingsButton, -6, SpringLayout.HEIGHT, topPanel);
+
         centerLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, fieldPanel, 0,SpringLayout.HORIZONTAL_CENTER, centerPanel);
         centerLayout.putConstraint(SpringLayout.VERTICAL_CENTER, fieldPanel, 0, SpringLayout.VERTICAL_CENTER, centerPanel);
         //centerLayout.putConstraint(SpringLayout.WIDTH, fieldPanel, 0,SpringLayout.HEIGHT, fieldPanel);
@@ -179,7 +243,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
 
     }
 
-    private void setupField(int rows,int cols){
+    private void setupField(int rows,int cols) {
         cells = new JButton[rows][cols];
         for(int row = 0; row < rows; row++) {
             for(int col = 0; col < cols; col++){
@@ -247,23 +311,17 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
                 pressed = false;
             }
         });
-    }
 
 
 
-    private void updateCellImage(int row, int col, Dimension sz) {
-        Image scaled = bufferedCellImages[row][col].getScaledInstance(sz.width, sz.height, Image.SCALE_FAST);
-        cells[row][col].setIcon(new ImageIcon(scaled));
     }
 
     private void resizeField(int width, int height) {
         fieldPanel.setPreferredSize(new Dimension(width,height));
     }
 
-
     @Override
     public void update() {
-
     }
 
     @Override
@@ -276,21 +334,6 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
             return dataBuffer;
         }
     }
-
-    private DTO dataBuffer = new DTO("empty");
-    private double verticalPartOfTopPanel = 0.07;
-    private double verticalPartOfBottomPanel = 0.07;
-    private double verticalPartOfCenterPanel = 0.86;
-    private JPanel topPanel;
-    private JPanel centerPanel;
-    private JPanel fieldPanel;
-    private JPanel bottomPanel;
-    private JButton[][] cells;
-    private int[][] cachedCellsState;
-    private BufferedImage[][] bufferedCellImages;
-    private BufferedImage bufferedRetryImage;
-    private JButton retryButton;
-
 
     @Override
     public void draw(Integer[][] field) {
@@ -338,4 +381,56 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
             }
         }
     }
+
+
+    private void initArrays(int rows, int cols) {
+        bufferedCellImages = new BufferedImage[rows][cols];
+        cachedCellsState = new int[rows][cols];
+        for(int i =0 ;i<rows;i++){
+            for(int j=0;j<cols;j++){
+                cachedCellsState[i][j] = -2;
+            }
+        }
+    }
+
+
+    private void setupFieldPanel(int rows, int cols) {
+        fieldPanel.setLayout(new GridLayout(rows,cols));
+        int sz = min(centerPanel.getWidth() / cols, centerPanel.getHeight() / rows);
+        fieldPanel.setPreferredSize(new Dimension(sz * cols, sz* rows));
+    }
+
+    @Override
+    public void restart(int rows, int cols) {
+
+        fieldPanel.removeAll();
+
+        setupCenterPanel(rows,cols);
+        setupFieldPanel(rows,cols);
+        initArrays(rows,cols);
+        setupField(rows, cols);
+
+        fieldPanel.revalidate();
+        fieldPanel.repaint();
+    }
+
+
+    private DTO dataBuffer = new DTO("empty");
+    private double verticalPartOfTopPanel = 0.07;
+    private double verticalPartOfBottomPanel = 0.07;
+    private double verticalPartOfCenterPanel = 0.86;
+    private JPanel topPanel;
+    private JPanel centerPanel;
+    private JPanel fieldPanel;
+    private JPanel bottomPanel;
+    private JButton[][] cells;
+    private int[][] cachedCellsState;
+    private BufferedImage[][] bufferedCellImages;
+    private BufferedImage bufferedRetryImage;
+    private BufferedImage bufferedSettingsImage;
+    private JButton retryButton;
+    private JButton settingsButton;
+    private int width = 500;
+    private int height = 500;
+
 }

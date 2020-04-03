@@ -9,9 +9,10 @@ import java.util.Random;
 
 public class Minesweeper {
 
-    public Minesweeper(int width, int height) {
+    public Minesweeper() {
+
+        gameFrame = new GameFrame(rows, cols);
         setup();
-        gameFrame = new GameFrame(width,height, rows, cols);
         run();
     }
 
@@ -30,6 +31,9 @@ public class Minesweeper {
         openedCells = 0;
         alive = 1;
         endShown = 0;
+
+        gameFrame.restart(rows,cols);
+
     }
 
 
@@ -152,6 +156,14 @@ public class Minesweeper {
             } else if(data.getDescription().equals("retry")) {
                 System.out.println("retry!");
                 setup();
+            } else if(data.getDescription().equals("settings")) {
+                settings();
+            } else if(data.getDescription().equals("confirmSettings")) {
+                String[] args = data.getArgs();
+                rows = Integer.parseInt(args[0]);
+                cols = Integer.parseInt(args[1]);
+                minesCount = Integer.parseInt(args[2]);
+                setup();
             }
         }
     }
@@ -192,7 +204,15 @@ public class Minesweeper {
 
     private void settings() {
 
-        Frame setupFrame = new SetupFrame();
+        SetupFrame setupFrame = new  SetupFrame();
+
+        while(setupFrame.isShowing() &&  !setupFrame.done()  ) {
+
+            handleResponse(setupFrame.requestData());
+            setupFrame.update();
+            System.out.println("set");
+        }
+
 
     }
 
@@ -200,8 +220,8 @@ public class Minesweeper {
     private GameFrame gameFrame;
     private int openedCells = 0;
     private int minesCount = 7;
-    private int rows = 13;
-    private int cols = 7;
+    private int rows = 15;
+    private int cols = 15;
     private Integer[][] cellsState;                   // -4: opened mine  -3: flag    -2: unchecked   -1: mine  0: opened
     private Integer[][] field;                        // -1: mine    0-8: number
     private int alive = 1;

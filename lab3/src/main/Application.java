@@ -5,7 +5,7 @@ import java.nio.file.Files;
 
 public class Application {
     public static void main(String[] args) {
-        new Minesweeper(500,500);
+        new Minesweeper();
 
     }
 }
