@@ -219,7 +219,7 @@ public class Minesweeper {
 
         HighscoresFrame highscoresFrame = new main.ui.gui.HighscoresFrame();
 
-        
+
 
         gameFrame.resume();
 
