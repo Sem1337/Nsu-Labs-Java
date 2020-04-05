@@ -2,7 +2,9 @@ package main.ui.gui;
 
 import main.ui.DTO;
 
-public class HighscoresFrame implements main.ui.Frame {
+import javax.swing.*;
+
+public class HighscoresFrame extends JFrame implements main.ui.HighscoresFrame {
     @Override
     public void update() {
 

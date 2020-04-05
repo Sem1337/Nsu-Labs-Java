@@ -2,16 +2,18 @@ package main;
 
 import main.ui.DTO;
 import main.ui.Frame;
-import main.ui.gui.GameFrame;
-import main.ui.gui.SetupFrame;
+import main.ui.HighscoresFrame;
+import main.ui.GameFrame;
+import main.ui.SetupFrame;
 
+import javax.swing.*;
 import java.util.Random;
 
 public class Minesweeper {
 
     public Minesweeper() {
 
-        gameFrame = new GameFrame(rows, cols);
+        gameFrame = new main.ui.gui.GameFrame(rows, cols);
         setup();
         run();
     }
@@ -110,6 +112,13 @@ public class Minesweeper {
     }
 
     private void endOfGame() {
+        String message;
+        if(alive == 1) {
+          message = new String("You won in " + gameFrame.getCurrentGameTime() + " seconds!");
+        } else {
+          message = new String("You lost");
+        }
+        gameFrame.showEndGameMessage(message);
         System.out.println("END!");
 
     }
@@ -164,6 +173,8 @@ public class Minesweeper {
                 cols = Integer.parseInt(args[1]);
                 minesCount = Integer.parseInt(args[2]);
                 setup();
+            } else if(data.getDescription().equals("highscores")) {
+                showHighscores();
             }
         }
     }
@@ -202,20 +213,32 @@ public class Minesweeper {
     }
 
 
+    private void showHighscores() {
+        gameFrame.pause();
+
+
+        HighscoresFrame highscoresFrame = new main.ui.gui.HighscoresFrame();
+
+        
+
+        gameFrame.resume();
+
+    }
+
     private void settings() {
+        gameFrame.pause();
+        SetupFrame setupFrame = new  main.ui.gui.SetupFrame();
 
-        SetupFrame setupFrame = new  SetupFrame();
-
-        while(setupFrame.isShowing() &&  !setupFrame.done()  ) {
+        while(!setupFrame.done()) {
 
             handleResponse(setupFrame.requestData());
             setupFrame.update();
             System.out.println("set");
         }
 
+        gameFrame.resume();
 
     }
-
 
     private GameFrame gameFrame;
     private int openedCells = 0;

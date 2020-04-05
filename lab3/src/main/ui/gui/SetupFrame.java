@@ -30,7 +30,6 @@ public class SetupFrame extends JFrame implements main.ui.SetupFrame {
         configureConstraints();
 
         setContentPane(contents);
-        // Определяем размер окна и выводим его на экран
         setSize(500, 500);
         setVisible(true);
     }
@@ -175,7 +174,7 @@ public class SetupFrame extends JFrame implements main.ui.SetupFrame {
 
     @Override
     public boolean done() {
-        return readyToDispose;
+        return readyToDispose || !isShowing();
     }
 
     @Override

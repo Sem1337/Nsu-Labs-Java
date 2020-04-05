@@ -1,5 +1,6 @@
 package main.ui.gui;
 
+import main.Timer;
 import main.ui.DTO;
 
 import javax.imageio.ImageIO;
@@ -38,6 +39,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         bottomPanel = new JPanel();
         bottomPanel.setBackground(Color.GREEN);
         bottomPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfBottomPanel)));
+        bottomPanel.add(timerLabel);
 
         centerPanel.setVisible(true);
         bottomPanel.setVisible(true);
@@ -52,6 +54,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
                 int width = e.getComponent().getWidth();
                 int height = e.getComponent().getHeight();
                 bottomPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfBottomPanel)));
+                timerLabel.setFont(new Font(timerLabel.getFont().getName(), Font.PLAIN,  (int) (height*verticalPartOfBottomPanel*0.7)));
                 centerPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfCenterPanel)));
                 topPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfTopPanel)));
             }
@@ -322,6 +325,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
 
     @Override
     public void update() {
+        timerLabel.setText(timer.getCurrentTime().toString());
     }
 
     @Override
@@ -412,9 +416,34 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
 
         fieldPanel.revalidate();
         fieldPanel.repaint();
+        timer.start();
     }
 
+    @Override
+    public void pause() {
+        setEnabled(false);
+        timer.stop();
+    }
 
+    @Override
+    public void resume() {
+        setEnabled(true);
+        toFront();
+        timer.resume();
+    }
+
+    @Override
+    public Long getCurrentGameTime() {
+        return timer.getCurrentTime();
+    }
+
+    @Override
+    public void showEndGameMessage(String message) {
+        JOptionPane.showMessageDialog(GameFrame.this,  message );
+    }
+
+    private JLabel timerLabel = new JLabel();
+    private main.Timer timer = new Timer();
     private DTO dataBuffer = new DTO("empty");
     private double verticalPartOfTopPanel = 0.07;
     private double verticalPartOfBottomPanel = 0.07;

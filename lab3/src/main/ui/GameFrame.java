@@ -6,5 +6,12 @@ public interface GameFrame extends Frame {
 
     void restart(int rows,int cols);
 
+    void pause();
+
+    void resume();
+
+    Long getCurrentGameTime();
+
+    void showEndGameMessage(String message);
 
 }
