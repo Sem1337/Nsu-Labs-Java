@@ -24,9 +24,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         this.setPreferredSize(new Dimension(width,height));
 
         topPanel = new JPanel();
-        topPanel.setBackground(Color.RED);
-        topPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfTopPanel)));
-
+        setupTopPanel();
 
         centerPanel = new JPanel();
         setupCenterPanel(rows,cols);
@@ -37,8 +35,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         setupField(rows,cols);
 
         bottomPanel = new JPanel();
-        bottomPanel.setBackground(Color.GREEN);
-        bottomPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfBottomPanel)));
+        setupBottomPanel();
         bottomPanel.add(timerLabel);
 
         centerPanel.setVisible(true);
@@ -68,9 +65,18 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         configureConstraints();
         setVisible(true);
 
-
     }
 
+    private void setupTopPanel() {
+        topPanel.setBackground(Color.ORANGE);
+        topPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfTopPanel)));
+    }
+
+
+    private void setupBottomPanel() {
+        bottomPanel.setBackground(Color.ORANGE);
+        bottomPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfBottomPanel)));
+    }
 
     private void setupCenterPanel(int rows,int cols) {
 
@@ -81,7 +87,6 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         for (var listener: listeners) {
             centerPanel.removeComponentListener(listener);
         }
-
         centerPanel.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -93,6 +98,25 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         });
     }
 
+    private void setupFieldPanel(int rows, int cols) {
+        fieldPanel.setLayout(new GridLayout(rows,cols));
+        int sz = min(centerPanel.getWidth() / cols, centerPanel.getHeight() / rows);
+        fieldPanel.setPreferredSize(new Dimension(sz * cols, sz* rows));
+    }
+
+    private JButton createButtonWithImage(BufferedImage bufferedImage) {
+        JButton button = new JButton();
+        button.setVisible(true);
+        button.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                super.componentResized(e);
+                Dimension size = e.getComponent().getSize();
+                updateButtonImage(button, bufferedImage, size);
+            }
+        });
+        return button;
+    }
 
     private void setupButtons() {
         try {
@@ -100,17 +124,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         } catch (IOException e) {
             System.out.println(e.getLocalizedMessage());
         }
-        retryButton = new JButton();
-        retryButton.setVisible(true);
-
-        retryButton.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                super.componentResized(e);
-                Dimension size = e.getComponent().getSize();
-                updateButtonImage(retryButton, bufferedRetryImage, size);
-            }
-        });
+        retryButton = createButtonWithImage(bufferedRetryImage);
 
         retryButton.addMouseListener(new MouseAdapter() {
             boolean pressed;
@@ -150,23 +164,12 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         topPanel.add(retryButton);
 
 
-
         try {
             bufferedSettingsImage = ImageIO.read(new File("resources/settings256.png"));
         } catch (IOException e) {
             System.out.println(e.getLocalizedMessage());
         }
-        settingsButton = new JButton();
-        settingsButton.setVisible(true);
-
-        settingsButton.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                super.componentResized(e);
-                Dimension size = e.getComponent().getSize();
-                updateButtonImage(settingsButton, bufferedSettingsImage, size);
-            }
-        });
+        settingsButton = createButtonWithImage(bufferedSettingsImage);
 
         settingsButton.addMouseListener(new MouseAdapter() {
             boolean pressed;
@@ -206,8 +209,50 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         topPanel.add(settingsButton);
 
 
-    }
+        try {
+            bufferedHighscoresImage = ImageIO.read(new File("resources/history256.png"));
+        } catch (IOException e) {
+            System.out.println(e.getLocalizedMessage());
+        }
+        highscoresButton = createButtonWithImage(bufferedHighscoresImage);
 
+        highscoresButton.addMouseListener(new MouseAdapter() {
+            boolean pressed;
+            JButton button = highscoresButton;
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                button.getModel().setArmed(true);
+                button.getModel().setPressed(true);
+                pressed = true;
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                button.getModel().setArmed(false);
+                button.getModel().setPressed(false);
+
+                if (pressed) {
+                    dataBuffer = new DTO("highscores");
+                }
+                pressed = false;
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                pressed = true;
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                pressed = false;
+            }
+        });
+        topPanel.add(highscoresButton);
+    }
 
     private void updateButtonImage(JButton button, Image img, Dimension size) {
         Image scaled = img.getScaledInstance(size.width, size.height, Image.SCALE_FAST);
@@ -232,9 +277,13 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         topLayout.putConstraint(SpringLayout.WIDTH, settingsButton, 0, SpringLayout.HEIGHT, settingsButton);
         topLayout.putConstraint(SpringLayout.HEIGHT, settingsButton, -6, SpringLayout.HEIGHT, topPanel);
 
+        topLayout.putConstraint(SpringLayout.EAST, highscoresButton, -5, SpringLayout.WEST, settingsButton);
+        topLayout.putConstraint(SpringLayout.NORTH, highscoresButton, 3, SpringLayout.NORTH, topPanel);
+        topLayout.putConstraint(SpringLayout.WIDTH, highscoresButton, 0, SpringLayout.HEIGHT, highscoresButton);
+        topLayout.putConstraint(SpringLayout.HEIGHT, highscoresButton, -6, SpringLayout.HEIGHT, topPanel);
+
         centerLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, fieldPanel, 0,SpringLayout.HORIZONTAL_CENTER, centerPanel);
         centerLayout.putConstraint(SpringLayout.VERTICAL_CENTER, fieldPanel, 0, SpringLayout.VERTICAL_CENTER, centerPanel);
-        //centerLayout.putConstraint(SpringLayout.WIDTH, fieldPanel, 0,SpringLayout.HEIGHT, fieldPanel);
 
         layout.putConstraint(SpringLayout.NORTH, centerPanel, 0,SpringLayout.SOUTH,topPanel);
         layout.putConstraint(SpringLayout.SOUTH, bottomPanel,0,SpringLayout.SOUTH, this.getContentPane());
@@ -323,6 +372,18 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         fieldPanel.setPreferredSize(new Dimension(width,height));
     }
 
+    private void initArrays(int rows, int cols) {
+        bufferedCellImages = new BufferedImage[rows][cols];
+        cachedCellsState = new int[rows][cols];
+        for(int i =0 ;i<rows;i++){
+            for(int j=0;j<cols;j++){
+                cachedCellsState[i][j] = -2;
+            }
+        }
+    }
+
+
+
     @Override
     public void update() {
         timerLabel.setText(timer.getCurrentTime().toString());
@@ -337,6 +398,11 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         } else {
             return dataBuffer;
         }
+    }
+
+    @Override
+    public boolean willDisappear() {
+        return !isShowing();
     }
 
     @Override
@@ -384,24 +450,6 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
                 cachedCellsState[i][j] = field[i][j];
             }
         }
-    }
-
-
-    private void initArrays(int rows, int cols) {
-        bufferedCellImages = new BufferedImage[rows][cols];
-        cachedCellsState = new int[rows][cols];
-        for(int i =0 ;i<rows;i++){
-            for(int j=0;j<cols;j++){
-                cachedCellsState[i][j] = -2;
-            }
-        }
-    }
-
-
-    private void setupFieldPanel(int rows, int cols) {
-        fieldPanel.setLayout(new GridLayout(rows,cols));
-        int sz = min(centerPanel.getWidth() / cols, centerPanel.getHeight() / rows);
-        fieldPanel.setPreferredSize(new Dimension(sz * cols, sz* rows));
     }
 
     @Override
@@ -457,9 +505,11 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
     private BufferedImage[][] bufferedCellImages;
     private BufferedImage bufferedRetryImage;
     private BufferedImage bufferedSettingsImage;
+    private BufferedImage bufferedHighscoresImage;
     private JButton retryButton;
     private JButton settingsButton;
-    private int width = 500;
-    private int height = 500;
+    private JButton highscoresButton;
+    private int width = 650;
+    private int height = 650;
 
 }

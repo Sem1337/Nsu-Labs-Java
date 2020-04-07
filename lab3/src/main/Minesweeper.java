@@ -7,6 +7,9 @@ import main.ui.GameFrame;
 import main.ui.SetupFrame;
 
 import javax.swing.*;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Random;
 
 public class Minesweeper {
@@ -21,7 +24,6 @@ public class Minesweeper {
     private void setup() {
         cellsState =  new Integer[rows][cols];
         field = new Integer[rows][cols];
-        //placeMines();
 
         for(int i = 0; i<rows; i++) {
             for(int j=0;j < cols;j++){
@@ -111,17 +113,39 @@ public class Minesweeper {
         }
     }
 
+    private void saveResult(long time) {
+        String str = "size: " + rows + " x " + cols + " mines: "+ minesCount + " time: " + time + " seconds\n";
+        BufferedWriter writer = null;
+        try {
+            writer = new BufferedWriter(new FileWriter(gameArchiveFileName, true));
+            writer.write(str);
+        }catch (IOException e){
+            System.out.println(e.getLocalizedMessage());
+        }finally {
+            if(writer != null) {
+                try {
+                    writer.close();
+                }catch (IOException e) {
+                    System.out.println(e.getLocalizedMessage());
+                }
+            }
+        }
+    }
+
     private void endOfGame() {
         String message;
         if(alive == 1) {
-          message = new String("You won in " + gameFrame.getCurrentGameTime() + " seconds!");
+            long time = gameFrame.getCurrentGameTime();
+          message = "You won in " + time + " seconds!";
+          saveResult(time);
         } else {
-          message = new String("You lost");
+          message = "You lost";
         }
         gameFrame.showEndGameMessage(message);
         System.out.println("END!");
-
     }
+
+
 
     private void uncoverField() {
         for(int row =0; row < rows; row++) {
@@ -217,8 +241,12 @@ public class Minesweeper {
         gameFrame.pause();
 
 
-        HighscoresFrame highscoresFrame = new main.ui.gui.HighscoresFrame();
+        HighscoresFrame highscoresFrame = new main.ui.gui.HighscoresFrame(gameArchiveFileName);
 
+        while(!highscoresFrame.willDisappear()){
+            handleResponse(highscoresFrame.requestData());
+            highscoresFrame.update();
+        }
 
 
         gameFrame.resume();
@@ -229,7 +257,7 @@ public class Minesweeper {
         gameFrame.pause();
         SetupFrame setupFrame = new  main.ui.gui.SetupFrame();
 
-        while(!setupFrame.done()) {
+        while(!setupFrame.willDisappear()) {
 
             handleResponse(setupFrame.requestData());
             setupFrame.update();
@@ -240,6 +268,7 @@ public class Minesweeper {
 
     }
 
+    private String gameArchiveFileName = "resources/archive.txt";
     private GameFrame gameFrame;
     private int openedCells = 0;
     private int minesCount = 7;

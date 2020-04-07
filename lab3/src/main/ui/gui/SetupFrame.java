@@ -12,8 +12,9 @@ public class SetupFrame extends JFrame implements main.ui.SetupFrame {
         setTitle("settings");
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
-
+        setLocationRelativeTo(null);
+        this.setResizable(false);
+        setBackground(Color.ORANGE);
         setupTextFields();
         setupButtons();
         setupLabels();
@@ -28,9 +29,9 @@ public class SetupFrame extends JFrame implements main.ui.SetupFrame {
         contents.add(confirmButton);
 
         configureConstraints();
-
         setContentPane(contents);
-        setSize(500, 500);
+        contents.setBackground(Color.YELLOW);
+        setSize(400, 400);
         setVisible(true);
     }
 
@@ -140,7 +141,7 @@ public class SetupFrame extends JFrame implements main.ui.SetupFrame {
         SpringLayout layout = new SpringLayout();
         contents.setLayout(layout);
 
-        layout.putConstraint(SpringLayout.WEST, rowsLabel, 0,SpringLayout.WEST, contents);
+        layout.putConstraint(SpringLayout.EAST, rowsLabel, -100 , SpringLayout.HORIZONTAL_CENTER, contents);
         layout.putConstraint(SpringLayout.VERTICAL_CENTER, rowsLabel, 0 , SpringLayout.VERTICAL_CENTER, rowsCountText);
 
         layout.putConstraint(SpringLayout.WEST, colsLabel, 0, SpringLayout.WEST, rowsLabel);
@@ -158,10 +159,10 @@ public class SetupFrame extends JFrame implements main.ui.SetupFrame {
         layout.putConstraint(SpringLayout.WEST, minesCountText, 0,SpringLayout.EAST, minesLabel);
         layout.putConstraint(SpringLayout.NORTH, minesCountText, 5 , SpringLayout.SOUTH, colsCountText);
 
-        layout.putConstraint(SpringLayout.WEST, cancelButton, 0,SpringLayout.WEST, contents);
-        layout.putConstraint(SpringLayout.NORTH, cancelButton, 0 , SpringLayout.SOUTH, minesCountText);
+        layout.putConstraint(SpringLayout.WEST, cancelButton, 40,SpringLayout.WEST, rowsLabel);
+        layout.putConstraint(SpringLayout.NORTH, cancelButton, 30 , SpringLayout.SOUTH, minesCountText);
 
-        layout.putConstraint(SpringLayout.WEST, confirmButton, 0,SpringLayout.EAST, cancelButton);
+        layout.putConstraint(SpringLayout.WEST, confirmButton, 10,SpringLayout.EAST, cancelButton);
         layout.putConstraint(SpringLayout.NORTH, confirmButton, 0 , SpringLayout.NORTH, cancelButton);
 
     }
@@ -173,7 +174,7 @@ public class SetupFrame extends JFrame implements main.ui.SetupFrame {
     }
 
     @Override
-    public boolean done() {
+    public boolean willDisappear() {
         return readyToDispose || !isShowing();
     }
 
