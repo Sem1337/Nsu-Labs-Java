@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Random;
 
 class Minesweeper {
-    private static final boolean gui = false;
+    private static final boolean gui = true;
     Minesweeper() {
 
         if(gui) {
