@@ -1,8 +1,1 @@
-size: 15 x 15 mines: 7 time: 9 seconds
-size: 15 x 15 mines: 7 time: 2 seconds
-size: 15 x 15 mines: 7 time: 14 seconds
-size: 15 x 15 mines: 7 time: 1 seconds
-size: 15 x 15 mines: 7 time: 1 seconds
-size: 15 x 15 mines: 7 time: 0 seconds
-size: 15 x 15 mines: 7 time: 1 seconds
-size: 15 x 15 mines: 7 time: 15 seconds
+size: 10 x 10 mines: 3 time: 8 seconds

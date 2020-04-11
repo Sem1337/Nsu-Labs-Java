@@ -1,22 +1,25 @@
 package main;
 
 import main.ui.DTO;
-import main.ui.Frame;
 import main.ui.HighscoresFrame;
 import main.ui.GameFrame;
 import main.ui.SetupFrame;
 
-import javax.swing.*;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Random;
 
-public class Minesweeper {
+class Minesweeper {
+    private static final boolean gui = false;
+    Minesweeper() {
 
-    public Minesweeper() {
+        if(gui) {
+            gameFrame = new main.ui.gui.GameFrame();
+        } else {
+            gameFrame = new main.ui.tui.GameFrame();
+        }
 
-        gameFrame = new main.ui.gui.GameFrame(rows, cols);
         setup();
         run();
     }
@@ -35,9 +38,7 @@ public class Minesweeper {
         openedCells = 0;
         alive = 1;
         endShown = 0;
-
         gameFrame.restart(rows,cols);
-
     }
 
 
@@ -80,37 +81,40 @@ public class Minesweeper {
                 field[i][j] = cnt;
             }
         }
-
-
-        for(int i =0; i< rows ;i ++ ){
-            for(int j=0;j<cols;j++){
-                System.out.print(cellsState[i][j] + " ");
-            }
-            System.out.println();
-        }
-
     }
 
     private void run() {
 
+        startUpdatingGameFrame();
+        while(!gameFrame.willDisappear()) {
 
-        while(true) {
-            while (openedCells < rows * cols - minesCount && alive == 1) {
-                // request for the user action
+            while (openedCells < rows * cols - minesCount && alive == 1 && !gameFrame.willDisappear()) {
                 handleResponse(gameFrame.requestData());
-
-
-                gameFrame.draw(getVisibleField());
-                gameFrame.update();
+                gameFrame.draw( getVisibleField());
             }
 
+            if(gameFrame.willDisappear())break;
             if(endShown == 0) {
                 endOfGame();
                 endShown = 1;
             }
+
             handleResponse(gameFrame.requestData());
 
         }
+    }
+
+    private void startUpdatingGameFrame() {
+        isUpdatingStopped = false;
+
+        gameFrameUpdatingThread = new Thread(() -> {
+            while (openedCells < rows * cols - minesCount && alive == 1 && !gameFrame.willDisappear()) {
+                gameFrame.update();
+            }
+            isUpdatingStopped = true;
+        });
+
+        gameFrameUpdatingThread.start();
     }
 
     private void saveResult(long time) {
@@ -142,7 +146,6 @@ public class Minesweeper {
           message = "You lost";
         }
         gameFrame.showEndGameMessage(message);
-        System.out.println("END!");
     }
 
 
@@ -164,6 +167,7 @@ public class Minesweeper {
                 String[] args = data.getArgs();
                 int row = Integer.parseInt(args[0]);
                 int col = Integer.parseInt(args[1]);
+                if(row<0 || row >= rows || col < 0 || col >= cols)return;
                 if(cellsState[row][col] != 0) {
                     if(field[row][col] == -1)  {
                         cellsState[row][col] = -4;
@@ -181,14 +185,17 @@ public class Minesweeper {
                 String[] args = data.getArgs();
                 int row = Integer.parseInt(args[0]);
                 int col = Integer.parseInt(args[1]);
+                if(row<0 || row >= rows || col < 0 || col >= cols)return;
                 if(cellsState[row][col] == -3) {
                     cellsState[row][col] = -2;
                 } else if(cellsState[row][col] == -2){
                     cellsState[row][col] = -3;
                 }
             } else if(data.getDescription().equals("retry")) {
-                System.out.println("retry!");
                 setup();
+                if(isUpdatingStopped) {
+                    startUpdatingGameFrame();
+                }
             } else if(data.getDescription().equals("settings")) {
                 settings();
             } else if(data.getDescription().equals("confirmSettings")) {
@@ -240,34 +247,56 @@ public class Minesweeper {
     private void showHighscores() {
         gameFrame.pause();
 
-
-        HighscoresFrame highscoresFrame = new main.ui.gui.HighscoresFrame(gameArchiveFileName);
-
-        while(!highscoresFrame.willDisappear()){
-            handleResponse(highscoresFrame.requestData());
-            highscoresFrame.update();
+        try {
+            gameFrameUpdatingThread.join();
+        } catch (InterruptedException e) {
+            System.out.println(e.getLocalizedMessage());
         }
 
+        HighscoresFrame highscoresFrame;
+        if(gui){
+            highscoresFrame = new main.ui.gui.HighscoresFrame(gameArchiveFileName);
+        } else {
+            highscoresFrame = new main.ui.tui.HighscoresFrame(gameArchiveFileName);
+        }
+
+        while(!highscoresFrame.willDisappear()){
+            highscoresFrame.update();
+            handleResponse(highscoresFrame.requestData());
+        }
 
         gameFrame.resume();
-
+        startUpdatingGameFrame();
     }
 
     private void settings() {
+
         gameFrame.pause();
-        SetupFrame setupFrame = new  main.ui.gui.SetupFrame();
+
+        try {
+            gameFrameUpdatingThread.join();
+        } catch (InterruptedException e) {
+            System.out.println(e.getLocalizedMessage());
+        }
+
+        SetupFrame setupFrame;
+        if(gui) {
+            setupFrame = new  main.ui.gui.SetupFrame();
+        } else {
+            setupFrame = new  main.ui.tui.SetupFrame();
+        }
 
         while(!setupFrame.willDisappear()) {
-
-            handleResponse(setupFrame.requestData());
             setupFrame.update();
-            System.out.println("set");
+            handleResponse(setupFrame.requestData());
         }
 
         gameFrame.resume();
-
+        startUpdatingGameFrame();
     }
 
+    private Thread gameFrameUpdatingThread;
+    private boolean isUpdatingStopped = true;
     private String gameArchiveFileName = "resources/archive.txt";
     private GameFrame gameFrame;
     private int openedCells = 0;

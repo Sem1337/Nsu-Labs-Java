@@ -15,7 +15,7 @@ import static java.lang.Math.min;
 
 public class GameFrame extends JFrame implements main.ui.GameFrame {
 
-    public GameFrame(int rows, int cols) {
+    public GameFrame() {
         setSize(width, height);
         setMinimumSize(new Dimension(450,450));
         setLocationRelativeTo(null);
@@ -27,12 +27,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         setupTopPanel();
 
         centerPanel = new JPanel();
-        setupCenterPanel(rows,cols);
-
-        initArrays(rows,cols);
         fieldPanel = new JPanel();
-        setupFieldPanel(rows,cols);
-        setupField(rows,cols);
 
         bottomPanel = new JPanel();
         setupBottomPanel();
@@ -407,9 +402,9 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
 
     @Override
     public void draw(Integer[][] field) {
-
         for(int i = 0; i< field.length; i++) {
             for(int j=0; j< field[i].length; j++){
+
                 if(cachedCellsState[i][j] == field[i][j])continue;
                 if(field[i][j] == -3) {
                     try {
