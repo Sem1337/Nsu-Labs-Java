@@ -19,7 +19,7 @@ public class SetupFrame implements main.ui.SetupFrame {
         } catch (InterruptedException | IOException e) {
             System.out.println(e.getLocalizedMessage());
         }
-        viewList.add(new MessageView("Commands: 'cancel',  'rows cols mines'\n( " + minDimension + " <= dimension <= " + maxDimension + " 0 <= mines <=  rows * columns)\n:"));
+        viewList.add(new MessageView("Commands: 'cancel',  'rows cols mines'\n( " + minDimension + " <= dimension <= " + maxDimension + " 0 <= mines <  rows * columns)\n:"));
 
     }
 
@@ -37,8 +37,6 @@ public class SetupFrame implements main.ui.SetupFrame {
             view.draw();
         }
 
-        System.out.println(currentInput);
-
     }
 
     @Override
@@ -46,7 +44,7 @@ public class SetupFrame implements main.ui.SetupFrame {
 
 
         Scanner scanner = new Scanner(System.in);
-        command = scanner.nextLine();
+        String command = scanner.nextLine();
 
         if(command.isEmpty()) return new DTO("empty");
         if(command.equals("cancel")) {
@@ -84,7 +82,5 @@ public class SetupFrame implements main.ui.SetupFrame {
     private int maxDimension = 50;
     private List<View> viewList = new LinkedList<>();
     private boolean readyToDispose = false;
-    private String currentInput = "";
-    private String command = "";
 
 }

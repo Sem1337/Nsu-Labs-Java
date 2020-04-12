@@ -1,1 +1,14 @@
-size: 10 x 10 mines: 3 time: 8 seconds
+size: 15 x 15 mines: 7 time: 6 seconds
+size: 15 x 15 mines: 7 time: 10 seconds
+size: 44 x 4 mines: 4 time: 4 seconds
+size: 44 x 4 mines: 4 time: 3 seconds
+size: 50 x 50 mines: 8 time: 2 seconds
+size: 50 x 50 mines: 8 time: 2 seconds
+size: 50 x 50 mines: 8 time: 2 seconds
+size: 3 x 3 mines: 1 time: 5 seconds
+size: 44 x 44 mines: 0 time: 1 seconds
+size: 10 x 10 mines: 99 time: 0 seconds
+size: 10 x 10 mines: 99 time: 1 seconds
+size: 1 x 1 mines: 0 time: 1 seconds
+size: 1 x 1 mines: 0 time: 0 seconds
+size: 1 x 1 mines: 0 time: 4 seconds

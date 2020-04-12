@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.TimeUnit;
 
-public class GameFrame implements main.ui.GameFrame, KeyListener {
+public class GameFrame implements main.ui.GameFrame {
 
     public GameFrame() {
 
@@ -97,7 +97,7 @@ public class GameFrame implements main.ui.GameFrame, KeyListener {
             System.out.println(e.getLocalizedMessage());
         }
 
-        timerView = new MessageView(timer.getCurrentTime().toString() + " seconds");
+        View timerView = new MessageView(timer.getCurrentTime().toString() + " seconds");
         timerView.draw();
 
         fieldView.draw();
@@ -107,7 +107,6 @@ public class GameFrame implements main.ui.GameFrame, KeyListener {
             view.draw();
         }
 
-        System.out.println(currentInput);
     }
 
     @Override
@@ -115,7 +114,7 @@ public class GameFrame implements main.ui.GameFrame, KeyListener {
 
 
         Scanner scanner = new Scanner(System.in);
-        command = scanner.nextLine();
+        String command = scanner.nextLine();
 
 
         if(command.isEmpty()) return new DTO("empty");
@@ -153,42 +152,9 @@ public class GameFrame implements main.ui.GameFrame, KeyListener {
     }
 
 
-    @Override
-    public void keyTyped(KeyEvent keyEvent) {
-        if(keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
-            command = currentInput;
-            currentInput = "";
-        } else {
-            currentInput += keyEvent.getKeyChar();
-            try {
-                new ProcessBuilder("pause", "/c", "pause").inheritIO().start().waitFor();
-            } catch(IOException | InterruptedException e) {
-                System.out.println(e.getLocalizedMessage());
-            }
-        }
-    }
-
-    @Override
-    public void keyPressed(KeyEvent keyEvent) {
-        if(keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
-            command = currentInput;
-            currentInput = "";
-        } else {
-            currentInput += keyEvent.getKeyChar();
-        }
-    }
-
-    @Override
-    public void keyReleased(KeyEvent keyEvent) {
-
-    }
-
     private View fieldView;
-    private View timerView;
     private List<View> viewList = new LinkedList<>();
     private main.Timer timer = new Timer();
     private boolean readyToDispose = false;
-    private String currentInput = "";
-    private String command = "";
 
 }

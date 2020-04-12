@@ -112,7 +112,7 @@ public class SetupFrame extends JFrame implements main.ui.SetupFrame {
                         int cols = Integer.parseInt(colsCountText.getText());
                         int rows =Integer.parseInt(rowsCountText.getText());
                         int mines = Integer.parseInt(minesCountText.getText());
-                        if(cols > maxDimension || cols < minDimension || rows > maxDimension || rows < minDimension || mines < 0 || mines >= cols*rows) throw new Exception("incorrect input: " + minDimension + " <= dimension <= " + maxDimension + "\n 0 <= mines <= rows * columns");
+                        if(cols > maxDimension || cols < minDimension || rows > maxDimension || rows < minDimension || mines < 0 || mines >= cols*rows) throw new Exception("incorrect input: " + minDimension + " <= dimension <= " + maxDimension + "\n 0 <= mines < rows * columns");
                     }catch(Exception ex) {
                         JOptionPane.showMessageDialog(SetupFrame.this,  ex.getMessage());
                         return;

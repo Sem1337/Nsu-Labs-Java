@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.Random;
 
 class Minesweeper {
-    private static final boolean gui = true;
+    private static final boolean gui = false;
     Minesweeper() {
 
         if(gui) {
@@ -290,7 +290,7 @@ class Minesweeper {
             setupFrame.update();
             handleResponse(setupFrame.requestData());
         }
-
+        setupFrame.update();
         gameFrame.resume();
         startUpdatingGameFrame();
     }

@@ -55,15 +55,13 @@ public class HighscoresFrame implements main.ui.HighscoresFrame {
             view.draw();
         }
 
-        System.out.println(currentInput);
-
     }
 
     @Override
     public DTO requestData() {
 
         Scanner scanner = new Scanner(System.in);
-        command = scanner.nextLine();
+        String command = scanner.nextLine();
 
         if(command.equals("close")) {
             readyToDispose = true;
@@ -86,7 +84,5 @@ public class HighscoresFrame implements main.ui.HighscoresFrame {
     private List<String> lines = new LinkedList<>();
     private String fileName;
     private boolean readyToDispose = false;
-    private String currentInput = "";
-    private String command = "";
 
 }

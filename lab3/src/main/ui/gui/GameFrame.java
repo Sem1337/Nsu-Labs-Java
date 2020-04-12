@@ -397,7 +397,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
 
     @Override
     public boolean willDisappear() {
-        return !isShowing();
+        return !isShowing() || readyToDispose;
     }
 
     @Override
@@ -465,12 +465,14 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
     @Override
     public void pause() {
         setEnabled(false);
+        readyToDispose = true;
         timer.stop();
     }
 
     @Override
     public void resume() {
         setEnabled(true);
+        readyToDispose = false;
         toFront();
         timer.resume();
     }
@@ -485,6 +487,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         JOptionPane.showMessageDialog(GameFrame.this,  message );
     }
 
+    private boolean readyToDispose = false;
     private JLabel timerLabel = new JLabel();
     private main.Timer timer = new Timer();
     private DTO dataBuffer = new DTO("empty");
