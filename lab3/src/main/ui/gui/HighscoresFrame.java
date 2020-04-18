@@ -40,7 +40,7 @@ public class HighscoresFrame extends JFrame implements main.ui.HighscoresFrame {
 
     private void setupTextArea() {
         textArea = new JTextArea(25,20);
-        scroll = new JScrollPane(textArea);
+        JScrollPane scroll = new JScrollPane(textArea);
         textArea.setEditable(false);
         for (String line: lines) {
             textArea.append(line);
@@ -98,7 +98,7 @@ public class HighscoresFrame extends JFrame implements main.ui.HighscoresFrame {
                 lines.add(scanner.nextLine() + System.lineSeparator());
             }
         } catch (IOException e) {
-            System.out.println(e.getLocalizedMessage());
+            new File(fileName);
         }
     }
 
@@ -124,12 +124,10 @@ public class HighscoresFrame extends JFrame implements main.ui.HighscoresFrame {
 
     @Override
     public  void update() {
-        if(readyToDispose)dispose();
+
     }
 
-    private boolean readyToDispose = false;
     private JTextArea textArea;
-    private JScrollPane scroll;
     private List<String> lines = new LinkedList<>();
     private String fileName;
     private JPanel listPanel;

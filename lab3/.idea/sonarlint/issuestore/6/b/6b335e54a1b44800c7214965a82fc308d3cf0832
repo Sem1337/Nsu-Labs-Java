@@ -1,0 +1,9 @@
+
+k
+java:S4042I"IUse "java.nio.Files#delete" here for better messages on error conditions.(²Œ­ûÿÿÿÿ8ëâ§ò˜.
+\	java:S899I";Do something with the "boolean" value returned by "delete".(²Œ­ûÿÿÿÿ8ëâ§ò˜.
+l
+java:S1450„"URemove the "scroll" field and declare it as a local variable in the relevant methods.(×åÍ‚
+(
+java:S2176"Rename this class.(Éï·˜
+Q	java:S110"<This class has 6 parents which is greater than 5 authorized.(Éï·˜

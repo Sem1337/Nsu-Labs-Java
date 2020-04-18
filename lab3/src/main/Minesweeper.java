@@ -198,7 +198,6 @@ public class Minesweeper {
 
     private void showExtraFrame() {
         gameFrame.pause();
-        System.out.println(state);
         Frame frame;
         if (state == 1) {
             frame = FrameFactory.getSetupFrame(this);

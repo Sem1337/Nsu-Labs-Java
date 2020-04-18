@@ -57,6 +57,7 @@ public class SetupFrame extends JFrame implements main.ui.SetupFrame {
         cancelButton.addMouseListener(new MouseAdapter() {
             boolean pressed;
             JButton button = cancelButton;
+
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
@@ -93,6 +94,7 @@ public class SetupFrame extends JFrame implements main.ui.SetupFrame {
         confirmButton.addMouseListener(new MouseAdapter() {
             boolean pressed;
             JButton button = confirmButton;
+
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
@@ -109,15 +111,17 @@ public class SetupFrame extends JFrame implements main.ui.SetupFrame {
                 if (pressed) {
 
                     try {
-                        if(colsCountText.getText().isEmpty() || rowsCountText.getText().isEmpty() || minesCountText.getText().isEmpty()) throw new Exception("fill all fields");
+                        if (colsCountText.getText().isEmpty() || rowsCountText.getText().isEmpty() || minesCountText.getText().isEmpty())
+                            throw new Exception("fill all fields");
                         int cols = Integer.parseInt(colsCountText.getText());
-                        int rows =Integer.parseInt(rowsCountText.getText());
+                        int rows = Integer.parseInt(rowsCountText.getText());
                         int mines = Integer.parseInt(minesCountText.getText());
-                        if(cols > maxDimension || cols < minDimension || rows > maxDimension || rows < minDimension || mines < 0 || mines >= cols*rows) throw new Exception("incorrect input: " + minDimension + " <= dimension <= " + maxDimension + "\n 0 <= mines < rows * columns");
-                        gameModel.setParameters(rows,cols,mines);
+                        if (cols > maxDimension || cols < minDimension || rows > maxDimension || rows < minDimension || mines < 0 || mines >= cols * rows)
+                            throw new Exception("incorrect input: " + minDimension + " <= dimension <= " + maxDimension + "\n 0 <= mines < rows * columns");
+                        gameModel.setParameters(rows, cols, mines);
                         readyToDispose = true;
-                    }catch(Exception ex) {
-                        JOptionPane.showMessageDialog(SetupFrame.this,  ex.getMessage());
+                    } catch (Exception ex) {
+                        JOptionPane.showMessageDialog(SetupFrame.this, ex.getMessage());
                         return;
                     }
                 }
@@ -143,29 +147,29 @@ public class SetupFrame extends JFrame implements main.ui.SetupFrame {
         SpringLayout layout = new SpringLayout();
         contents.setLayout(layout);
 
-        layout.putConstraint(SpringLayout.EAST, rowsLabel, -100 , SpringLayout.HORIZONTAL_CENTER, contents);
-        layout.putConstraint(SpringLayout.VERTICAL_CENTER, rowsLabel, 0 , SpringLayout.VERTICAL_CENTER, rowsCountText);
+        layout.putConstraint(SpringLayout.EAST, rowsLabel, -100, SpringLayout.HORIZONTAL_CENTER, contents);
+        layout.putConstraint(SpringLayout.VERTICAL_CENTER, rowsLabel, 0, SpringLayout.VERTICAL_CENTER, rowsCountText);
 
         layout.putConstraint(SpringLayout.WEST, colsLabel, 0, SpringLayout.WEST, rowsLabel);
-        layout.putConstraint(SpringLayout.VERTICAL_CENTER, colsLabel, 0 , SpringLayout.VERTICAL_CENTER, colsCountText);
+        layout.putConstraint(SpringLayout.VERTICAL_CENTER, colsLabel, 0, SpringLayout.VERTICAL_CENTER, colsCountText);
 
-        layout.putConstraint(SpringLayout.WEST,  minesLabel, 0, SpringLayout.WEST, rowsLabel);
-        layout.putConstraint(SpringLayout.VERTICAL_CENTER, minesLabel, 0 , SpringLayout.VERTICAL_CENTER, minesCountText);
+        layout.putConstraint(SpringLayout.WEST, minesLabel, 0, SpringLayout.WEST, rowsLabel);
+        layout.putConstraint(SpringLayout.VERTICAL_CENTER, minesLabel, 0, SpringLayout.VERTICAL_CENTER, minesCountText);
 
-        layout.putConstraint(SpringLayout.WEST, rowsCountText, 0,SpringLayout.EAST, rowsLabel);
-        layout.putConstraint(SpringLayout.NORTH, rowsCountText, 0 , SpringLayout.NORTH,  contents);
+        layout.putConstraint(SpringLayout.WEST, rowsCountText, 0, SpringLayout.EAST, rowsLabel);
+        layout.putConstraint(SpringLayout.NORTH, rowsCountText, 0, SpringLayout.NORTH, contents);
 
-        layout.putConstraint(SpringLayout.WEST, colsCountText, 0,SpringLayout.EAST, colsLabel);
+        layout.putConstraint(SpringLayout.WEST, colsCountText, 0, SpringLayout.EAST, colsLabel);
         layout.putConstraint(SpringLayout.NORTH, colsCountText, 5, SpringLayout.SOUTH, rowsCountText);
 
-        layout.putConstraint(SpringLayout.WEST, minesCountText, 0,SpringLayout.EAST, minesLabel);
-        layout.putConstraint(SpringLayout.NORTH, minesCountText, 5 , SpringLayout.SOUTH, colsCountText);
+        layout.putConstraint(SpringLayout.WEST, minesCountText, 0, SpringLayout.EAST, minesLabel);
+        layout.putConstraint(SpringLayout.NORTH, minesCountText, 5, SpringLayout.SOUTH, colsCountText);
 
-        layout.putConstraint(SpringLayout.WEST, cancelButton, 40,SpringLayout.WEST, rowsLabel);
-        layout.putConstraint(SpringLayout.NORTH, cancelButton, 30 , SpringLayout.SOUTH, minesCountText);
+        layout.putConstraint(SpringLayout.WEST, cancelButton, 40, SpringLayout.WEST, rowsLabel);
+        layout.putConstraint(SpringLayout.NORTH, cancelButton, 30, SpringLayout.SOUTH, minesCountText);
 
-        layout.putConstraint(SpringLayout.WEST, confirmButton, 10,SpringLayout.EAST, cancelButton);
-        layout.putConstraint(SpringLayout.NORTH, confirmButton, 0 , SpringLayout.NORTH, cancelButton);
+        layout.putConstraint(SpringLayout.WEST, confirmButton, 10, SpringLayout.EAST, cancelButton);
+        layout.putConstraint(SpringLayout.NORTH, confirmButton, 0, SpringLayout.NORTH, cancelButton);
 
     }
 
@@ -181,8 +185,8 @@ public class SetupFrame extends JFrame implements main.ui.SetupFrame {
     }
 
     @Override
-    public  void update() {
-        if(readyToDispose)dispose();
+    public void update() {
+        if (readyToDispose) dispose();
     }
 
 

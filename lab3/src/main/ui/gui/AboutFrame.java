@@ -12,7 +12,6 @@ public class AboutFrame extends JFrame implements main.ui.AboutFrame {
 
     public AboutFrame() {
         setTitle("about");
-        System.out.println("here");
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         panel = new JPanel();
@@ -30,8 +29,8 @@ public class AboutFrame extends JFrame implements main.ui.AboutFrame {
 
 
     private void setupTextArea() {
-        textArea = new JTextArea(25, 40);
-        scroll = new JScrollPane(textArea);
+        JTextArea textArea = new JTextArea(25, 40);
+        JScrollPane scroll = new JScrollPane(textArea);
         textArea.setEditable(false);
         List<String> contents = readRules();
         for (String line: contents) {
@@ -59,12 +58,8 @@ public class AboutFrame extends JFrame implements main.ui.AboutFrame {
 
     @Override
     public void update() {
-        if (readyToDispose) dispose();
     }
 
 
-    private boolean readyToDispose = false;
-    private JTextArea textArea;
-    private JScrollPane scroll;
     private JPanel panel;
 }
