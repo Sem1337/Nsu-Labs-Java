@@ -1,7 +1,5 @@
 package main.ui.gui;
 
-import main.ui.DTO;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -120,20 +118,16 @@ public class HighscoresFrame extends JFrame implements main.ui.HighscoresFrame {
     }
 
     @Override
-    public void update() {
-
+    public synchronized boolean isActive() {
+        return isShowing();
     }
 
     @Override
-    public DTO requestData() {
-        return new DTO("empty");
+    public  void update() {
+        if(readyToDispose)dispose();
     }
 
-    @Override
-    public boolean willDisappear() {
-        return !isShowing();
-    }
-
+    private boolean readyToDispose = false;
     private JTextArea textArea;
     private JScrollPane scroll;
     private List<String> lines = new LinkedList<>();

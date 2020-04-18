@@ -2,7 +2,7 @@ package main.ui;
 
 public interface GameFrame extends Frame {
 
-    void draw(Integer[][] field);
+    void setNewField(Integer[][] field);
 
     void restart(int rows,int cols);
 
@@ -12,6 +12,6 @@ public interface GameFrame extends Frame {
 
     Long getCurrentGameTime();
 
-    void showEndGameMessage(String message);
+    void showEndGameMessage();
 
 }

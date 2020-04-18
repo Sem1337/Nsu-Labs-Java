@@ -3,7 +3,9 @@ package main;
 public class Timer {
 
     public Timer() {
-
+        currentTime = 0;
+        firstTime = 0;
+        lastTime = 0;
     }
 
     public void start() {

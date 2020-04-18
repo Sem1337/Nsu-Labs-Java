@@ -1,26 +1,20 @@
 package main.ui.tui;
 
+import main.Minesweeper;
 import main.Timer;
-import main.ui.DTO;
-
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.io.IOException;
 import java.util.LinkedList;
 
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
-
 public class GameFrame implements main.ui.GameFrame {
 
-    public GameFrame() {
-
+    public GameFrame(Minesweeper gameModel) {
+        this.gameModel = gameModel;
     }
 
     private void initViews(int rows,int cols) {
         viewList.clear();
-        viewList.add(new MessageView("'flag/open row col' 'exit' 'settings' 'highscores' 'retry'\n (1<= row <= " + rows + "   1 <= col <= " + cols + ")\n:"));
+        viewList.add(new MessageView("commands: 'exit' 'retry' 'settings' 'highscores'  'about' 'open x y'  'flag x y'\n (1<= row <= " + rows + "   1 <= col <= " + cols + ")\n:"));
     }
 
     private void initField(int rows, int cols) {
@@ -34,7 +28,7 @@ public class GameFrame implements main.ui.GameFrame {
     }
 
     @Override
-    public void draw(Integer[][] field) {
+    public void setNewField(Integer[][] field) {
             if(field.length == 0)return;
             Character[][] fieldCharacters = new Character[field.length][field[0].length];
             for(int row = 0; row < field.length; row++) {
@@ -83,51 +77,48 @@ public class GameFrame implements main.ui.GameFrame {
     }
 
     @Override
-    public void showEndGameMessage(String message) {
-            new MessageView(message).draw();
+    public void showEndGameMessage() {
+        String message;
+        if(gameModel.isAlive()) {
+            message = "You won in " + getCurrentGameTime() + " seconds!";
+        } else {
+            message = "You lost";
+        }
+        new MessageView(message).draw();
     }
 
     @Override
     public void update() {
-        for(int i = 0; i< 10;i++) System.out.println();
-
-        try {
-            TimeUnit.MILLISECONDS.sleep(500);
-        } catch (InterruptedException e) {
-            System.out.println(e.getLocalizedMessage());
-        }
+        System.out.println();
 
         View timerView = new MessageView(timer.getCurrentTime().toString() + " seconds");
         timerView.draw();
 
         fieldView.draw();
 
-
         for (var view: viewList) {
             view.draw();
         }
-
+        requestData();
     }
 
-    @Override
-    public DTO requestData() {
+
+    private void requestData() {
 
 
         Scanner scanner = new Scanner(System.in);
         String command = scanner.nextLine();
 
-
-        if(command.isEmpty()) return new DTO("empty");
         if(command.equals("exit")) {
-            try {
-                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-            } catch (InterruptedException | IOException e) {
-                System.out.println(e.getLocalizedMessage());
-            }
             readyToDispose = true;
-            return new DTO("empty");
-        } else if(command.equals("settings") || command.equals("highscores") || command.equals("retry")) {
-            return new DTO(command);
+        } else if(command.equals("settings")) {
+            gameModel.setState(1);
+        } else if(command.equals("highscores")) {
+            gameModel.setState(2);
+        } else if(command.equals("about")) {
+            gameModel.setState(3);
+        } else if(command.equals("retry")) {
+            gameModel.setup();
         } else {
             try {
                 String [] values = command.split(" ");
@@ -135,23 +126,26 @@ public class GameFrame implements main.ui.GameFrame {
                 String type = values[0];
                 String rowText = values[1];
                 String colText = values[2];
-                String commandName = type.equals("open")? "openCell" : "setFlag";
                 int col = Integer.parseInt(colText) - 1;
                 int row = Integer.parseInt(rowText) - 1;
-                return new DTO( commandName, Integer.toString(row), Integer.toString(col));
+                if(type.equals("flag")) {
+                    gameModel.setFlag(row, col);
+                } else {
+                    gameModel.openCell(row,col);
+                }
 
             }catch(Exception ex) {
-                return new DTO("empty");
+                System.out.println(ex.getLocalizedMessage());
             }
         }
     }
 
     @Override
-    public boolean willDisappear() {
-        return readyToDispose;
+    public boolean isActive() {
+        return !readyToDispose;
     }
 
-
+    private Minesweeper gameModel;
     private View fieldView;
     private List<View> viewList = new LinkedList<>();
     private main.Timer timer = new Timer();

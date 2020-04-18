@@ -1,0 +1,8 @@
+The player opens the cells, trying not to open the cell with the mine. 
+Opening a cell with a mine, he loses. 
+Mines are placed after the first turn.
+Limitations on the size of the field:
+lines: from 1 to 50
+columns: 1 to 50
+number of mines: from 0 to (rows * columns-1)
+commands: 'exit' 'retry' 'settings' 'highscores'  'about' 'open x y'  'flag x y'

@@ -1,24 +1,14 @@
 package main.ui.tui;
 
-import main.ui.DTO;
-
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
 public class HighscoresFrame implements main.ui.HighscoresFrame {
 
     public HighscoresFrame(String fileName) {
-        try {
-            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
-        } catch (InterruptedException | IOException e) {
-            System.out.println(e.getLocalizedMessage());
-        }
 
         this.fileName = fileName;
         readHighscoresFile();
@@ -33,19 +23,13 @@ public class HighscoresFrame implements main.ui.HighscoresFrame {
                 lines.add(scanner.nextLine() + System.lineSeparator());
             }
         } catch (IOException e) {
-            File file = new File(fileName);
+            new File(fileName);
         }
     }
 
     @Override
     public void update() {
-        for(int i = 0; i< 10;i++) System.out.println();
-
-        try {
-            TimeUnit.MILLISECONDS.sleep(200);
-        } catch (InterruptedException e) {
-            System.out.println(e.getLocalizedMessage());
-        }
+        System.out.println();
 
         for (String line: lines) {
             System.out.println(line);
@@ -55,10 +39,11 @@ public class HighscoresFrame implements main.ui.HighscoresFrame {
             view.draw();
         }
 
+        requestData();
+
     }
 
-    @Override
-    public DTO requestData() {
+    private void requestData() {
 
         Scanner scanner = new Scanner(System.in);
         String command = scanner.nextLine();
@@ -71,13 +56,11 @@ public class HighscoresFrame implements main.ui.HighscoresFrame {
             lines.clear();
         }
 
-
-        return new DTO("empty");
     }
 
     @Override
-    public boolean willDisappear() {
-        return readyToDispose;
+    public boolean isActive() {
+        return !readyToDispose;
     }
 
     private List<View> viewList = new LinkedList<>();

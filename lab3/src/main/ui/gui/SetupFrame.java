@@ -1,6 +1,6 @@
 package main.ui.gui;
 
-import main.ui.DTO;
+import main.Minesweeper;
 
 import javax.swing.*;
 import java.awt.*;
@@ -8,7 +8,8 @@ import java.awt.event.*;
 
 public class SetupFrame extends JFrame implements main.ui.SetupFrame {
 
-    public SetupFrame() {
+    public SetupFrame(Minesweeper gameModel) {
+        this.gameModel = gameModel;
         setTitle("settings");
 
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -70,7 +71,7 @@ public class SetupFrame extends JFrame implements main.ui.SetupFrame {
                 button.getModel().setArmed(false);
                 button.getModel().setPressed(false);
                 if (pressed) {
-                    dataBuffer = new DTO("cancelSettings");
+                    readyToDispose = true;
                 }
                 pressed = false;
             }
@@ -113,11 +114,12 @@ public class SetupFrame extends JFrame implements main.ui.SetupFrame {
                         int rows =Integer.parseInt(rowsCountText.getText());
                         int mines = Integer.parseInt(minesCountText.getText());
                         if(cols > maxDimension || cols < minDimension || rows > maxDimension || rows < minDimension || mines < 0 || mines >= cols*rows) throw new Exception("incorrect input: " + minDimension + " <= dimension <= " + maxDimension + "\n 0 <= mines < rows * columns");
+                        gameModel.setParameters(rows,cols,mines);
+                        readyToDispose = true;
                     }catch(Exception ex) {
                         JOptionPane.showMessageDialog(SetupFrame.this,  ex.getMessage());
                         return;
                     }
-                    dataBuffer = new DTO("confirmSettings" , rowsCountText.getText(), colsCountText.getText(), minesCountText.getText());
                 }
                 pressed = false;
             }
@@ -174,34 +176,18 @@ public class SetupFrame extends JFrame implements main.ui.SetupFrame {
     }
 
     @Override
-    public boolean willDisappear() {
-        return readyToDispose || !isShowing();
+    public synchronized boolean isActive() {
+        return isShowing();
     }
 
     @Override
-    public void update() {
-
-        if(readyToDispose) {
-            dispose();
-        }
-
-    }
-
-    @Override
-    public DTO requestData() {
-        if(!dataBuffer.getDescription().equals("empty")){
-            DTO sendCopy = new DTO(dataBuffer);
-            dataBuffer = new DTO("empty");
-            readyToDispose = true;
-            return sendCopy;
-        } else {
-            return dataBuffer;
-        }
+    public  void update() {
+        if(readyToDispose)dispose();
     }
 
 
+    private Minesweeper gameModel;
     private JPanel contents;
-    private DTO dataBuffer = new DTO("empty");
     private JTextField colsCountText;
     private JTextField rowsCountText;
     private JTextField minesCountText;

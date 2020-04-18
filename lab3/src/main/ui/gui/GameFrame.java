@@ -1,7 +1,7 @@
 package main.ui.gui;
 
+import main.Minesweeper;
 import main.Timer;
-import main.ui.DTO;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -15,13 +15,14 @@ import static java.lang.Math.min;
 
 public class GameFrame extends JFrame implements main.ui.GameFrame {
 
-    public GameFrame() {
+    public GameFrame(Minesweeper gameModel) {
+        this.gameModel = gameModel;
         setSize(width, height);
-        setMinimumSize(new Dimension(450,450));
+        setMinimumSize(new Dimension(450, 450));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setTitle("main.Minesweeper");
-        this.setPreferredSize(new Dimension(width,height));
+        this.setPreferredSize(new Dimension(width, height));
 
         topPanel = new JPanel();
         setupTopPanel();
@@ -45,10 +46,10 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
                 super.componentResized(e);
                 int width = e.getComponent().getWidth();
                 int height = e.getComponent().getHeight();
-                bottomPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfBottomPanel)));
-                timerLabel.setFont(new Font(timerLabel.getFont().getName(), Font.PLAIN,  (int) (height*verticalPartOfBottomPanel*0.7)));
-                centerPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfCenterPanel)));
-                topPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfTopPanel)));
+                bottomPanel.setPreferredSize(new Dimension(width, (int) (height * verticalPartOfBottomPanel)));
+                timerLabel.setFont(new Font(timerLabel.getFont().getName(), Font.PLAIN, (int) (height * verticalPartOfBottomPanel * 0.7)));
+                centerPanel.setPreferredSize(new Dimension(width, (int) (height * verticalPartOfCenterPanel)));
+                topPanel.setPreferredSize(new Dimension(width, (int) (height * verticalPartOfTopPanel)));
             }
         });
 
@@ -64,22 +65,22 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
 
     private void setupTopPanel() {
         topPanel.setBackground(Color.ORANGE);
-        topPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfTopPanel)));
+        topPanel.setPreferredSize(new Dimension(width, (int) (height * verticalPartOfTopPanel)));
     }
 
 
     private void setupBottomPanel() {
         bottomPanel.setBackground(Color.ORANGE);
-        bottomPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfBottomPanel)));
+        bottomPanel.setPreferredSize(new Dimension(width, (int) (height * verticalPartOfBottomPanel)));
     }
 
-    private void setupCenterPanel(int rows,int cols) {
+    private void setupCenterPanel(int rows, int cols) {
 
         centerPanel.setBackground(Color.YELLOW);
-        centerPanel.setPreferredSize(new Dimension(width, (int) (height*verticalPartOfCenterPanel)));
+        centerPanel.setPreferredSize(new Dimension(width, (int) (height * verticalPartOfCenterPanel)));
 
         var listeners = centerPanel.getComponentListeners();
-        for (var listener: listeners) {
+        for (var listener : listeners) {
             centerPanel.removeComponentListener(listener);
         }
         centerPanel.addComponentListener(new ComponentAdapter() {
@@ -94,9 +95,9 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
     }
 
     private void setupFieldPanel(int rows, int cols) {
-        fieldPanel.setLayout(new GridLayout(rows,cols));
+        fieldPanel.setLayout(new GridLayout(rows, cols));
         int sz = min(centerPanel.getWidth() / cols, centerPanel.getHeight() / rows);
-        fieldPanel.setPreferredSize(new Dimension(sz * cols, sz* rows));
+        fieldPanel.setPreferredSize(new Dimension(sz * cols, sz * rows));
     }
 
     private JButton createButtonWithImage(BufferedImage bufferedImage) {
@@ -124,6 +125,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         retryButton.addMouseListener(new MouseAdapter() {
             boolean pressed;
             JButton button = retryButton;
+
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
@@ -139,7 +141,8 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
                 button.getModel().setPressed(false);
 
                 if (pressed) {
-                    dataBuffer = new DTO("retry");
+                    gameModel.setup();
+                    //dataBuffer = new DTO("retry");
                 }
                 pressed = false;
             }
@@ -169,6 +172,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         settingsButton.addMouseListener(new MouseAdapter() {
             boolean pressed;
             JButton button = settingsButton;
+
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
@@ -184,7 +188,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
                 button.getModel().setPressed(false);
 
                 if (pressed) {
-                    dataBuffer = new DTO("settings");
+                    gameModel.setState(1);
                 }
                 pressed = false;
             }
@@ -214,6 +218,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         highscoresButton.addMouseListener(new MouseAdapter() {
             boolean pressed;
             JButton button = highscoresButton;
+
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
@@ -229,7 +234,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
                 button.getModel().setPressed(false);
 
                 if (pressed) {
-                    dataBuffer = new DTO("highscores");
+                    gameModel.setState(2);
                 }
                 pressed = false;
             }
@@ -247,6 +252,54 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
             }
         });
         topPanel.add(highscoresButton);
+
+
+        try {
+            bufferedAboutImage = ImageIO.read(new File("resources/about225.png"));
+        } catch (IOException e) {
+            System.out.println(e.getLocalizedMessage());
+        }
+        aboutButton = createButtonWithImage(bufferedAboutImage);
+
+        aboutButton.addMouseListener(new MouseAdapter() {
+            boolean pressed;
+            JButton button = aboutButton;
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                super.mousePressed(e);
+                button.getModel().setArmed(true);
+                button.getModel().setPressed(true);
+                pressed = true;
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                super.mouseReleased(e);
+                button.getModel().setArmed(false);
+                button.getModel().setPressed(false);
+
+                if (pressed) {
+                    gameModel.setState(3);
+                }
+                pressed = false;
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                super.mouseEntered(e);
+                pressed = true;
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                super.mouseExited(e);
+                pressed = false;
+            }
+        });
+        topPanel.add(aboutButton);
+
+
     }
 
     private void updateButtonImage(JButton button, Image img, Dimension size) {
@@ -277,24 +330,30 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         topLayout.putConstraint(SpringLayout.WIDTH, highscoresButton, 0, SpringLayout.HEIGHT, highscoresButton);
         topLayout.putConstraint(SpringLayout.HEIGHT, highscoresButton, -6, SpringLayout.HEIGHT, topPanel);
 
-        centerLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, fieldPanel, 0,SpringLayout.HORIZONTAL_CENTER, centerPanel);
+        topLayout.putConstraint(SpringLayout.EAST, aboutButton, -5, SpringLayout.WEST, highscoresButton);
+        topLayout.putConstraint(SpringLayout.NORTH, aboutButton, 3, SpringLayout.NORTH, topPanel);
+        topLayout.putConstraint(SpringLayout.WIDTH, aboutButton, 0, SpringLayout.HEIGHT, aboutButton);
+        topLayout.putConstraint(SpringLayout.HEIGHT, aboutButton, -6, SpringLayout.HEIGHT, topPanel);
+
+
+        centerLayout.putConstraint(SpringLayout.HORIZONTAL_CENTER, fieldPanel, 0, SpringLayout.HORIZONTAL_CENTER, centerPanel);
         centerLayout.putConstraint(SpringLayout.VERTICAL_CENTER, fieldPanel, 0, SpringLayout.VERTICAL_CENTER, centerPanel);
 
-        layout.putConstraint(SpringLayout.NORTH, centerPanel, 0,SpringLayout.SOUTH,topPanel);
-        layout.putConstraint(SpringLayout.SOUTH, bottomPanel,0,SpringLayout.SOUTH, this.getContentPane());
-        layout.putConstraint(SpringLayout.SOUTH, centerPanel, 0,SpringLayout.NORTH, bottomPanel);
-        layout.putConstraint(SpringLayout.NORTH, topPanel,0,SpringLayout.NORTH, this.getContentPane());
-        layout.putConstraint(SpringLayout.WIDTH, topPanel,0,SpringLayout.WIDTH,this.getContentPane());
-        layout.putConstraint(SpringLayout.WIDTH, bottomPanel,0,SpringLayout.WIDTH,topPanel);
-        layout.putConstraint(SpringLayout.WIDTH, centerPanel,0,SpringLayout.WIDTH,topPanel);
+        layout.putConstraint(SpringLayout.NORTH, centerPanel, 0, SpringLayout.SOUTH, topPanel);
+        layout.putConstraint(SpringLayout.SOUTH, bottomPanel, 0, SpringLayout.SOUTH, this.getContentPane());
+        layout.putConstraint(SpringLayout.SOUTH, centerPanel, 0, SpringLayout.NORTH, bottomPanel);
+        layout.putConstraint(SpringLayout.NORTH, topPanel, 0, SpringLayout.NORTH, this.getContentPane());
+        layout.putConstraint(SpringLayout.WIDTH, topPanel, 0, SpringLayout.WIDTH, this.getContentPane());
+        layout.putConstraint(SpringLayout.WIDTH, bottomPanel, 0, SpringLayout.WIDTH, topPanel);
+        layout.putConstraint(SpringLayout.WIDTH, centerPanel, 0, SpringLayout.WIDTH, topPanel);
 
     }
 
-    private void setupField(int rows,int cols) {
+    private void setupField(int rows, int cols) {
         cells = new JButton[rows][cols];
-        for(int row = 0; row < rows; row++) {
-            for(int col = 0; col < cols; col++){
-                setupCell(row,col);
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < cols; col++) {
+                setupCell(row, col);
                 fieldPanel.add(cells[row][col]);
             }
         }
@@ -321,6 +380,7 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         cells[row][col].addMouseListener(new MouseAdapter() {
             boolean pressed;
             JButton button = cells[row][col];
+
             @Override
             public void mousePressed(MouseEvent e) {
                 super.mousePressed(e);
@@ -337,10 +397,9 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
 
                 if (pressed) {
                     if (SwingUtilities.isRightMouseButton(e)) {
-                        dataBuffer = new DTO("setFlag", row.toString(), col.toString());
-                    }
-                    else {
-                        dataBuffer = new DTO("openCell", row.toString(), col.toString());
+                        gameModel.setFlag(row, col);
+                    } else {
+                        gameModel.openCell(row, col);
                     }
                 }
                 pressed = false;
@@ -360,88 +419,77 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
         });
 
 
-
     }
 
     private void resizeField(int width, int height) {
-        fieldPanel.setPreferredSize(new Dimension(width,height));
+        fieldPanel.setPreferredSize(new Dimension(width, height));
     }
 
     private void initArrays(int rows, int cols) {
         bufferedCellImages = new BufferedImage[rows][cols];
         cachedCellsState = new int[rows][cols];
-        for(int i =0 ;i<rows;i++){
-            for(int j=0;j<cols;j++){
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
                 cachedCellsState[i][j] = -2;
             }
         }
     }
 
 
-
     @Override
     public void update() {
-        timerLabel.setText(timer.getCurrentTime().toString());
-    }
-
-    @Override
-    public DTO requestData() {
-        if(!dataBuffer.getDescription().equals("empty")){
-            DTO sendCopy = new DTO(dataBuffer);
-            dataBuffer = new DTO("empty");
-            return sendCopy;
-        } else {
-            return dataBuffer;
+        if (!gameModel.isGameOver()) {
+            timerLabel.setText(timer.getCurrentTime().toString());
         }
     }
 
+
     @Override
-    public boolean willDisappear() {
-        return !isShowing() || readyToDispose;
+    public boolean isActive() {
+        return isShowing() && !readyToDispose;
     }
 
     @Override
-    public void draw(Integer[][] field) {
-        for(int i = 0; i< field.length; i++) {
-            for(int j=0; j< field[i].length; j++){
-
-                if(cachedCellsState[i][j] == field[i][j])continue;
-                if(field[i][j] == -3) {
+    public void setNewField(Integer[][] field) {
+        for (int i = 0; i < field.length; i++) {
+            for (int j = 0; j < field[i].length; j++) {
+                if (cachedCellsState[i][j] == field[i][j]) continue;
+                if (field[i][j] == -3) {
                     try {
                         bufferedCellImages[i][j] = ImageIO.read(new File("resources/flag64.png"));
-                    } catch (IOException e){
-                        System.out.println("draw");
+                    } catch (IOException e) {
+                        System.out.println(e.getLocalizedMessage());
                     }
 
-                } else if(field[i][j] == -2) {
+                } else if (field[i][j] == -2) {
                     try {
                         bufferedCellImages[i][j] = ImageIO.read(new File("resources/unchecked45.png"));
-                    } catch (IOException e){
-                        System.out.println("draw");
+                    } catch (IOException e) {
+                        System.out.println(e.getLocalizedMessage());
                     }
-                }
-                else if(field[i][j] == -1) {
+                } else if (field[i][j] == -1) {
                     try {
                         bufferedCellImages[i][j] = ImageIO.read(new File("resources/mine80.jpg"));
                         cells[i][j].setBackground(Color.RED);
-                    } catch (IOException e){
-                        System.out.println("draw");
+                    } catch (IOException e) {
+                        System.out.println(e.getLocalizedMessage());
                     }
-                } else if(field[i][j] == -4) {
+                } else if (field[i][j] == -4) {
                     try {
                         bufferedCellImages[i][j] = ImageIO.read(new File("resources/red_mine80.jpg"));
                         cells[i][j].setBackground(Color.RED);
-                    } catch (IOException e){
-                        System.out.println("draw");
+                    } catch (IOException e) {
+                        System.out.println(e.getLocalizedMessage());
                     }
                 } else {
                     try {
                         bufferedCellImages[i][j] = ImageIO.read(new File("resources/" + field[i][j] + ".png"));
-                    } catch (IOException e){
-                        System.out.println("draw");
+                    } catch (IOException e) {
+                        System.out.println(e.getLocalizedMessage());
                     }
                 }
-                if(cells[i][j].getWidth() != 0) updateButtonImage(cells[i][j], bufferedCellImages[i][j], cells[i][j].getSize());
+                if (cells[i][j].getWidth() != 0)
+                    updateButtonImage(cells[i][j], bufferedCellImages[i][j], cells[i][j].getSize());
                 cachedCellsState[i][j] = field[i][j];
             }
         }
@@ -452,9 +500,9 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
 
         fieldPanel.removeAll();
 
-        setupCenterPanel(rows,cols);
-        setupFieldPanel(rows,cols);
-        initArrays(rows,cols);
+        setupCenterPanel(rows, cols);
+        setupFieldPanel(rows, cols);
+        initArrays(rows, cols);
         setupField(rows, cols);
 
         fieldPanel.revalidate();
@@ -483,14 +531,20 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
     }
 
     @Override
-    public void showEndGameMessage(String message) {
-        JOptionPane.showMessageDialog(GameFrame.this,  message );
+    public void showEndGameMessage() {
+        String message;
+        if (gameModel.isAlive()) {
+            message = "You won in " + getCurrentGameTime() + " seconds!";
+        } else {
+            message = "You lost";
+        }
+        JOptionPane.showMessageDialog(GameFrame.this, message);
     }
 
+    private Minesweeper gameModel;
     private boolean readyToDispose = false;
     private JLabel timerLabel = new JLabel();
     private main.Timer timer = new Timer();
-    private DTO dataBuffer = new DTO("empty");
     private double verticalPartOfTopPanel = 0.07;
     private double verticalPartOfBottomPanel = 0.07;
     private double verticalPartOfCenterPanel = 0.86;
@@ -504,9 +558,11 @@ public class GameFrame extends JFrame implements main.ui.GameFrame {
     private BufferedImage bufferedRetryImage;
     private BufferedImage bufferedSettingsImage;
     private BufferedImage bufferedHighscoresImage;
+    private BufferedImage bufferedAboutImage;
     private JButton retryButton;
     private JButton settingsButton;
     private JButton highscoresButton;
+    private JButton aboutButton;
     private int width = 650;
     private int height = 650;
 
