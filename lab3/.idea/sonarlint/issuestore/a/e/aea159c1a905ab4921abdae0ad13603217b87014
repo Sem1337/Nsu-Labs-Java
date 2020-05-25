@@ -1,29 +1,29 @@
 
-Q	java:S110"<This class has 6 parents which is greater than 5 authorized.(ˆÚ Ò
-F
-java:S2387·"/"height" is the name of a field in "Component".(œ·¾“
 (
 java:S2176"Rename this class.(ˆÚ Ò
-J
-java:S1948£"'Make "timer" transient or serializable.(Àş’¹ıÿÿÿÿ8”¨˜ò˜.
-P
-java:S1948°"9Make "bufferedHighscoresImage" transient or serializable.(ø§Œ
-P
-java:S1117/":Rename "width" which hides the field declared at line 566.(»Ìü
-p
-java:S3776Å"RRefactor this method to reduce its Cognitive Complexity from 36 to the 15 allowed.(¸Ûí¢8”¨˜ò˜.
-W	java:S125‘"<This block of commented-out lines of code should be removed.(¶ˆÊùÿÿÿÿ
 Q
 java:S2387¶"."width" is the name of a field in "Component".(“³¤Çıÿÿÿÿ8”¨˜ò˜.
+Q	java:S110"<This class has 6 parents which is greater than 5 authorized.(ˆÚ Ò
+J
+java:S1948£"'Make "timer" transient or serializable.(Àş’¹ıÿÿÿÿ8”¨˜ò˜.
+R
+java:S1948­"4Make "bufferedCellImages" transient or serializable.(èØš8”¨˜ò˜.
+W	java:S125‘"<This block of commented-out lines of code should be removed.(¶ˆÊùÿÿÿÿ
+M
+java:S1948¯"7Make "bufferedSettingsImage" transient or serializable.(º‚¨
+P
+java:S1948°"9Make "bufferedHighscoresImage" transient or serializable.(ø§Œ
+N
+java:S1948 "+Make "gameModel" transient or serializable.(œå½ıÿÿÿÿ8”¨˜ò˜.
+K
+java:S1948±"4Make "bufferedAboutImage" transient or serializable.(ïƒ¢¼
+F
+java:S2387·"/"height" is the name of a field in "Component".(œ·¾“
+P
+java:S1117/":Rename "width" which hides the field declared at line 566.(»Ìü
 P
 java:S1948®"4Make "bufferedRetryImage" transient or serializable.(Ô—Íüÿÿÿÿ
 Q
 java:S11170";Rename "height" which hides the field declared at line 567.(³¦ï³
-R
-java:S1948­"4Make "bufferedCellImages" transient or serializable.(èØš8”¨˜ò˜.
-N
-java:S1948 "+Make "gameModel" transient or serializable.(œå½ıÿÿÿÿ8”¨˜ò˜.
-M
-java:S1948¯"7Make "bufferedSettingsImage" transient or serializable.(º‚¨
-K
-java:S1948±"4Make "bufferedAboutImage" transient or serializable.(ïƒ¢¼
+p
+java:S3776Å"RRefactor this method to reduce its Cognitive Complexity from 36 to the 15 allowed.(¸Ûí¢8”¨˜ò˜.

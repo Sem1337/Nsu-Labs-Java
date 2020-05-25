@@ -1,0 +1,13 @@
+
+o
+java:S3776"RRefactor this method to reduce its Cognitive Complexity from 34 to the 15 allowed.(’Îá8¦Õ¦¸¡.
+w
+java:S1450i"[Remove the "bodySupplier" field and declare it as a local variable in the relevant methods.(¼ıâ8ğË€ .
+E
+java:S1481\"(Remove this unused "car" local variable.(˜‘ºŸ8³Ôà¸¡.
+
+java:S1450h"]Remove the "engineSupplier" field and declare it as a local variable in the relevant methods.(“Ú–—şÿÿÿÿ8ğË€ .
+K
+java:S1144".Remove this unused private "startWork" method.(’Îá8¦Õ¦¸¡.
+M
+java:S1068p"0Remove this unused "workersCount" private field.(Ô–ù´8ÃƒË¸¡.

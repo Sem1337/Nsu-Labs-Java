@@ -1,6 +1,6 @@
 
 3
 java:S2119/"Save and re-use this "Random".(¼ÝÅf
+r	java:S127,"XRefactor the code in order to not assign to this loop counter from within the loop body.(•ÞÍ§ÿÿÿÿÿ
 m
 java:S3776&"RRefactor this method to reduce its Cognitive Complexity from 32 to the 15 allowed.(ÜáöÊùÿÿÿÿ
-r	java:S127,"XRefactor the code in order to not assign to this loop counter from within the loop body.(•ÞÍ§ÿÿÿÿÿ

@@ -1,8 +1,6 @@
 
 U	java:S8997";Do something with the "boolean" value returned by "delete".(²Œ­ûÿÿÿÿ
-S	java:S106#"9Replace this use of System.out or System.err by a logger.(ñ—¸½úÿÿÿÿ
-d
-java:S40427"IUse "java.nio.Files#delete" here for better messages on error conditions.(²Œ­ûÿÿÿÿ
 (
 java:S2176	"Rename this class.(·«
-S	java:S106 "9Replace this use of System.out or System.err by a logger.(ªÓ¼áşÿÿÿÿ
+d
+java:S40427"IUse "java.nio.Files#delete" here for better messages on error conditions.(²Œ­ûÿÿÿÿ

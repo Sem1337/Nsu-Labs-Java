@@ -1,6 +1,3 @@
 
-S	java:S106("9Replace this use of System.out or System.err by a logger.(ªÓ¼áþÿÿÿÿ
 (
 java:S2176	"Rename this class.(ìŽüÎ
-N	java:S106"9Replace this use of System.out or System.err by a logger.(‡É»á
-S	java:S106+"9Replace this use of System.out or System.err by a logger.(ñ—¸½úÿÿÿÿ
